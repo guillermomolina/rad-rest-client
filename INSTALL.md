@@ -1,0 +1,1 @@
+pip install git+https://github.com/guillermomolina/rad-rest-client#egg=rad-rest-client
