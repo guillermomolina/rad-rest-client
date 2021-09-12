@@ -31,9 +31,27 @@ class RADZoneManager(RADInterface):
     def load(self, payload):
         self.evacuationState = payload.get('evacuationState')
 
-    def create(self, name, path=None, template=None, configuration=None):
-        json_body = {'configuration': [
-            configuration], 'name': name, 'noexecute': False}
+    def create(self, name, path=None, template=None):
+        json_body = {
+            'name': name, 
+            'path': path,
+            'template': template
+        }
+
+        url = '{}/{}/_rad_method/create'.format(
+            self.rad_session.url, self.href)
+        response = RADResponse(self.rad_session.session.request(
+            'PUT', url, json=json_body))
+        if response.status != 'success':
+            raise RADError(message='Request Failed')
+        print(response)
+
+    def importConfig(self, noexecute, name, configuration):
+        json_body = {
+            'noexecute': noexecute,
+            'name': name, 
+            'configuration': configuration
+        }
 
         url = '{}/{}/_rad_method/importConfig'.format(
             self.rad_session.url, self.href)
