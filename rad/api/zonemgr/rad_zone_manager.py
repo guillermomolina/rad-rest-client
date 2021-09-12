@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from rad import RADError
 from rad.api.rad_response import RADResponse
 from rad.api.zonemgr import RAD_NAMESPACE
 from rad.api.rad_interface import RADInterface
@@ -30,16 +31,25 @@ class RADZoneManager(RADInterface):
     def load(self, payload):
         self.evacuationState = payload.get('evacuationState')
 
-    def create(self, name, path=None, template=None):
-        json_body = {'name': name, 'noexecute': False}
-
-        if template is not None:
-            json_body['configuration'] = [template]
+    def create(self, name, path=None, template=None, configuration=None):
+        json_body = {'configuration': [
+            configuration], 'name': name, 'noexecute': False}
 
         url = '{}/{}/_rad_method/importConfig'.format(
             self.rad_session.url, self.href)
         response = RADResponse(self.rad_session.session.request(
-            'PUT', url, json_body))
+            'PUT', url, json=json_body))
+        if response.status != 'success':
+            raise RADError(message='Request Failed')
+        print(response)
+
+    def delete(self, name):
+        json_body = {'name': name}
+
+        url = '{}/{}/_rad_method/delete'.format(
+            self.rad_session.url, self.href)
+        response = RADResponse(self.rad_session.session.request(
+            'PUT', url, json=json_body))
         if response.status != 'success':
             raise RADError(message='Request Failed')
         print(response)
