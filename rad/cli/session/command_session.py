@@ -14,21 +14,21 @@
 
 import argparse
 
-from .cmd_login import CMDLogin
+from .subcommand_login import SubcommandLogin
 
-class CMDSession:
+class CommandSession:
     name = 'session'
     aliases = []
 
     commands = {
-        CMDLogin.name: CMDLogin
+        SubcommandLogin.name: SubcommandLogin
     }
 
     @staticmethod
     def init_parser(oci_subparsers):
         parent_parser = argparse.ArgumentParser(add_help=False)
-        parser = oci_subparsers.add_parser(CMDSession.name,
-            aliases=CMDSession.aliases,
+        parser = oci_subparsers.add_parser(CommandSession.name,
+            aliases=CommandSession.aliases,
             parents=[parent_parser],
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
             description='Manage sessions',
@@ -39,9 +39,9 @@ class CMDSession:
             metavar='COMMAND',
             required=True)
 
-        for subcommand in CMDSession.commands.values():
+        for subcommand in CommandSession.commands.values():
             subcommand.init_parser(subparsers, parent_parser)
 
     def __init__(self, options):
-        command = CMDSession.commands[options.subcommand]
+        command = CommandSession.commands[options.subcommand]
         command(options)

@@ -17,7 +17,7 @@ import argparse
 import logging
 
 from rad import __version__, RADException
-from .session import CMDSession
+from .session import CommandSession
 
 LOG = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
 
 
 class RADCLI:
-    commands = [CMDSession]
+    commands = [CommandSession]
 
 
     def __init__(self):

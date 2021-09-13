@@ -15,18 +15,18 @@
 
 import argparse
 
-class CMDLogin:
+class SubcommandLogin:
     name = 'login'
     aliases = []
 
     @staticmethod
     def init_parser(container_subparsers, parent_parser):
-        parser = container_subparsers.add_parser(CMDLogin.name,
-            aliases=CMDLogin.aliases,
+        parser = container_subparsers.add_parser(SubcommandLogin.name,
+            aliases=SubcommandLogin.aliases,
             parents=[parent_parser],
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-            description='CMDLogin to remnote rad server',
-            help='CMDLogin containers')
+            description='SubcommandLogin to remnote rad server',
+            help='SubcommandLogin containers')
 
     def __init__(self, options):
         print('ok')
