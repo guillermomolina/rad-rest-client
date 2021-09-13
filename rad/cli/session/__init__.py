@@ -12,11 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .rad_cli import RADCLI
-
-def main():
-    RADCLI()
-
-
-if __name__ == '__main__':
-    main()
+from .cmd_session import CMDSession

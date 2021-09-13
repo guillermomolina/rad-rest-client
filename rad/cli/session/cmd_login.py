@@ -12,11 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .rad_cli import RADCLI
 
-def main():
-    RADCLI()
+import argparse
 
+class CMDLogin:
+    name = 'login'
+    aliases = []
 
-if __name__ == '__main__':
-    main()
+    @staticmethod
+    def init_parser(container_subparsers, parent_parser):
+        parser = container_subparsers.add_parser(CMDLogin.name,
+            aliases=CMDLogin.aliases,
+            parents=[parent_parser],
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+            description='CMDLogin to remnote rad server',
+            help='CMDLogin containers')
+
+    def __init__(self, options):
+        print('ok')
