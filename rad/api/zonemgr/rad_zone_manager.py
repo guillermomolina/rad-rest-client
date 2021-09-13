@@ -38,36 +38,27 @@ class RADZoneManager(RADInterface):
             'template': template
         }
 
-        url = '{}/{}/_rad_method/create'.format(
-            self.rad_session.url, self.href)
-        response = RADResponse(self.rad_session.session.request(
-            'PUT', url, json=json_body))
+        response = self.request('PUT', '/_rad_method/create', json=json_body)
         if response.status != 'success':
             raise RADError(message='Request Failed')
         print(response)
 
-    def importConfig(self, noexecute, name, configuration):
+    def import_config(self, noexecute, name, configuration):
         json_body = {
             'noexecute': noexecute,
             'name': name, 
             'configuration': configuration
         }
 
-        url = '{}/{}/_rad_method/importConfig'.format(
-            self.rad_session.url, self.href)
-        response = RADResponse(self.rad_session.session.request(
-            'PUT', url, json=json_body))
+        response = self.request('PUT', '/_rad_method/importConfig', json=json_body)
         if response.status != 'success':
-            raise RADError(message='Request Failed')
+            raise RADError(message=response.payload.get('stderr'))
         print(response)
 
     def delete(self, name):
         json_body = {'name': name}
 
-        url = '{}/{}/_rad_method/delete'.format(
-            self.rad_session.url, self.href)
-        response = RADResponse(self.rad_session.session.request(
-            'PUT', url, json=json_body))
+        response = self.request('PUT', '/_rad_method/delete', json=json_body)
         if response.status != 'success':
             raise RADError(message='Request Failed')
         print(response)

@@ -20,11 +20,13 @@ from rad.api.authentication import RADSession
 
 if __name__ == '__main__':
     logging.basicConfig(level='DEBUG')
-    with RADSession('server', 6788, 'nova', 'secret') as session:
+    with RADSession('server') as session:
+        session.login('user', 'secret')
         zonelist = session.list_objects(RADZone())
         print([zone.name for zone in zonelist])
         zone_manager = session.get_object(RADZoneManager())
-        zone_manager.importConfig(False, 'myzone', ['create -b\nset brand=solaris\nset autoboot=true\nadd anet\nset linkname=net0\nset configure-allowed-address=true\nend\n'])
+        config = 'create -b\nset brand=solaris\nset autoboot=true\nadd anet\nset linkname=net0\nset configure-allowed-address=true\nend\n'
+        zone_manager.import_config(False, 'myzone', [config])
         zonelist = session.list_objects(RADZone())
         print([zone.name for zone in zonelist])
         zone_manager.delete('myzone')

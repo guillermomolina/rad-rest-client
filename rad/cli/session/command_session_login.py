@@ -20,6 +20,7 @@ from rad.api.authentication import RADSession
 
 LOG = logging.getLogger(__name__)
 
+
 class Password:
 
     DEFAULT = 'Prompt if not specified'
@@ -33,28 +34,23 @@ class Password:
         return self.value
 
 
-class SubcommandLogin:
+class CommandSessionLogin:
     name = 'login'
     aliases = []
 
     @staticmethod
     def init_parser(container_subparsers, parent_parser):
-        parser = container_subparsers.add_parser(SubcommandLogin.name,
-                                                 aliases=SubcommandLogin.aliases,
+        parser = container_subparsers.add_parser(CommandSessionLogin.name,
+                                                 aliases=CommandSessionLogin.aliases,
                                                  parents=[parent_parser],
                                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                                  description='Login to RAD REST server',
                                                  help='Login to RAD REST server')
-        parser.add_argument('hostname',
-                            metavar='hostname',
-                            help='Hostname or ip address for RAD REST server')
-        parser.add_argument('-p', '--port',
-                            type=int,
-                            default=6788,
-                            help='port for RAD REST server')
-        parser.add_argument('username',
+        parser.add_argument('-u', '--username',
+                            required=True,
                             help='Login username')
-        parser.add_argument('--password', type=Password,
+        parser.add_argument('-p', '--password',
+                            type=Password,
                             default=Password.DEFAULT,
                             help='Specify password')
         parser.add_argument('--ssl-cert-verify',
@@ -70,6 +66,6 @@ class SubcommandLogin:
                 verify = True
             else:
                 verify = False
-        session = RADSession(options.hostname, options.port, options.username, str(options.password),
-                   ssl_cert_verify=verify, ssl_cert_path=options.ssl_cert_path)
-        session.login()
+        with RADSession(options.hostname, options.port,
+                        ssl_cert_verify=verify, ssl_cert_path=options.ssl_cert_path) as session:
+            session.login(options.username, str(options.password))

@@ -18,6 +18,7 @@ import logging
 
 from rad import __version__, RADException
 from .session import CommandSession
+from .zone import CommandZone
 
 LOG = logging.getLogger(__name__)
 
@@ -36,15 +37,13 @@ def set_log_level(log_level):
         logging.basicConfig(level=levels[log_level])
 
 
-
 class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
                       argparse.RawDescriptionHelpFormatter):
     pass
 
 
 class RADCLI:
-    commands = [CommandSession]
-
+    commands = [CommandSession, CommandZone]
 
     def __init__(self):
         parser = argparse.ArgumentParser(
@@ -72,6 +71,13 @@ class RADCLI:
         parser.add_argument('-q', '--quiet',
                             help='Enable quiet mode',
                             action='store_true')
+        parser.add_argument('-H', '--hostname',
+                            required=True,
+                            help='Hostname or ip address for RAD REST server')
+        parser.add_argument('-p', '--port',
+                            type=int,
+                            default=6788,
+                            help='Port for RAD REST server')
 
         subparsers = parser.add_subparsers(
             dest='command',

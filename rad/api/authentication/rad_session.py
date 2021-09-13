@@ -30,22 +30,21 @@ LOG = logging.getLogger(__name__)
 class RADSession(RADInterface):
     RAD_COLLECTION = 'Session'
 
-    def __init__(self, hostname, username, password, port=6788, ssl_cert_verify=False, ssl_cert_path=None):
+    def __init__(self, hostname, port=6788, ssl_cert_verify=False, ssl_cert_path=None):
         super().__init__(RAD_NAMESPACE, RADSession.RAD_COLLECTION, RAD_API_VERSION)
         self.hostname = hostname
         self.port = port
-        self.username = username
-        self.password = password
         self.verify = ssl_cert_verify
         if self.verify and ssl_cert_path is not None:
             self.verify = ssl_cert_path
 
         self.session = None
-        self.session_file = '/tmp/{}.dat'.format(hostname)
+        self.session_file = '/tmp/{}_{}.dat'.format(hostname, port)
         self.max_session_time = 30 * 60
 
     def __enter__(self):
-        self.login()
+        self.load_session()
+        #self.login()
         return self
 
     def __exit__(self, exc_type, exc_value, tb):
@@ -77,7 +76,7 @@ class RADSession(RADInterface):
         if not was_read_from_cache:
             self.session = requests.Session()
             self.session.verify = self.verify
-            LOG.debug('Created new session with login')
+            LOG.debug('Created new session')
             self.save_session()
 
     def modification_date(self, filename):
@@ -89,24 +88,30 @@ class RADSession(RADInterface):
             pickle.dump(self.session, f)
             LOG.debug("Saved session to cache")
 
-    def login(self):
+    def request(self, method, path=None, **kwargs):
+        if path is None:
+            url = '{}/{}'.format(self.url, self.href)
+        else:
+            url = '{}/{}{}'.format(self.url, self.href, path)
+        res = self.session.request(method, url, **kwargs)
+        return RADResponse(res)
+
+    def login(self, username, password):
         config_json = {
-            "username": self.username,
-            "password": self.password,
+            "username": username,
+            "password": password,
             "scheme": "pam",
             "preserve": True,
             "timeout": -1
         }
-        url = '{}/{}'.format(self.url, self.href)
-        response = RADResponse(self.session.request(
-            "POST", url, json=config_json, verify=self.verify))
+        response = self.request("POST", json=config_json)
         if response.status != 'success':
             LOG.debug('Login to %s as %s failed' %
                       (self.hostname, self.username))
             raise RADError(message='Login Failed')
         self.href = response.payload.get('href')
-        LOG.debug('Login to %s as %s succeded with namespace with href %d' %
-                  (self.hostname, self.username, self.href))
+        LOG.debug('Login to %s as %s succeded with namespace with href %s' %
+                  (self.hostname, username, self.href))
 
     def list_objects(self, rad_object):
         # TODO test rad_instance_id is None ???
@@ -135,8 +140,3 @@ class RADSession(RADInterface):
         new_rad_object = collection_class(rad_session=self, href=item.get(
             'href'), payload=item.get(collection))
         return new_rad_object
-
-    def request(self, method, path, **kwargs):
-        url = '{}/{}'.format(self.url, self.href + path)
-        res = RADResponse(self.session.request(method, url, **kwargs))
-        return res

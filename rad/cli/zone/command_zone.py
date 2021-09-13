@@ -14,34 +14,34 @@
 
 import argparse
 
-from .command_session_login import CommandSessionLogin
+from .command_zone_list import CommandZoneList
 
-class CommandSession:
-    name = 'session'
+class CommandZone:
+    name = 'zone'
     aliases = []
 
     commands = {
-        CommandSessionLogin.name: CommandSessionLogin
+        CommandZoneList.name: CommandZoneList
     }
 
     @staticmethod
     def init_parser(oci_subparsers):
         parent_parser = argparse.ArgumentParser(add_help=False)
-        parser = oci_subparsers.add_parser(CommandSession.name,
-            aliases=CommandSession.aliases,
+        parser = oci_subparsers.add_parser(CommandZone.name,
+            aliases=CommandZone.aliases,
             parents=[parent_parser],
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-            description='Manage sessions',
-            help='Manage sessions')
+            description='Manage zones',
+            help='Manage zones')
 
         subparsers = parser.add_subparsers(
             dest='subcommand',
             metavar='COMMAND',
             required=True)
 
-        for subcommand in CommandSession.commands.values():
+        for subcommand in CommandZone.commands.values():
             subcommand.init_parser(subparsers, parent_parser)
 
     def __init__(self, options):
-        command = CommandSession.commands[options.subcommand]
+        command = CommandZone.commands[options.subcommand]
         command(options)

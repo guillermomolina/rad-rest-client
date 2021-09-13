@@ -14,7 +14,7 @@
 
 import logging
 
-from rad.exceptions import RADException
+from rad.exceptions import RADError, RADException
 from rad.api.rad_response import RADResponse
 
 LOG = logging.getLogger(__name__)
@@ -59,7 +59,12 @@ class RADInterface(object):
         else:
             self.rad_instance_id = None
 
-    def request(self, method, path, **kwargs):
-        url = '{}/{}'.format(self.rad_session.url, self.href + path)
-        res = RADResponse(self.rad_session.session.request(method, url, **kwargs))
-        return res
+    def request(self, method, path=None, **kwargs):
+        if path is None:
+            url = '{}/{}'.format(self.rad_session.url, self.href)
+        else:
+            url = '{}/{}{}'.format(self.rad_session.url, self.href, path)
+        if self.rad_session is None:
+            raise RADError('rad_session is undefined')
+        res = self.rad_session.session.request(method, url, **kwargs)
+        return RADResponse(res)
