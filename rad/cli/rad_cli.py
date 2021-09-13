@@ -36,6 +36,7 @@ def set_log_level(log_level):
         logging.basicConfig(level=levels[log_level])
 
 
+
 class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
                       argparse.RawDescriptionHelpFormatter):
     pass

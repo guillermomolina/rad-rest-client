@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import traceback
-import requests
 import logging
 
 from rad import RADError
@@ -27,17 +26,14 @@ LOG = logging.getLogger(__name__)
 class RADSession(RADInterface):
     RAD_COLLECTION = 'Session'
 
-    def __init__(self, ip, port, username, password, ssl_cert_verify=False, ssl_cert_path=None):
+    def __init__(self, username, password, ssl_cert_verify=False, ssl_cert_path=None):
         super().__init__(RAD_NAMESPACE, RADSession.RAD_COLLECTION, RAD_API_VERSION)
-        self.ip = ip
-        self.port = port
         self.username = username
         self.password = password
         self.verify = ssl_cert_verify
         if self.verify and ssl_cert_path is not None:
             self.verify = ssl_cert_path
         self.session_id = -1
-        self.session = None
 
     def __enter__(self):
         self.login()
@@ -49,14 +45,6 @@ class RADSession(RADInterface):
             return False
         return True
 
-    @property
-    def url(self):
-        url = 'https://%(ip)s:%(port)s' % {
-            'ip': self.ip,
-            'port': self.port,
-        }
-        return url
-
     def login(self):
         config_json = {
             "username": self.username,
@@ -65,20 +53,18 @@ class RADSession(RADInterface):
             "preserve": True,
             "timeout": -1
         }
-        with requests.Session() as session:
-            url = '{}/{}'.format(self.url, self.href)
-            response = RADResponse(session.request(
-                "POST", url, json=config_json, verify=self.verify))
-            if response.status != 'success':
-                LOG.debug('Login to %s as %s failed' %
-                          (self.ip, self.username))
-                raise RADError(message='Login Failed')
-            self.session = session
-            self.href = response.payload.get('href')
-            parts = self.rad_instance_id.split('/')
-            self.session_id = int(parts[1])
-            LOG.debug('Login to %s as %s succeded with namespace %d' %
-                      (self.ip, self.username, self.session_id))
+        url = '{}/{}'.format(self.url, self.href)
+        response = RADResponse(self.session.request(
+            "POST", url, json=config_json, verify=self.verify))
+        if response.status != 'success':
+            LOG.debug('Login to %s as %s failed' %
+                        (self.hostname, self.username))
+            raise RADError(message='Login Failed')
+        self.href = response.payload.get('href')
+        parts = self.rad_instance_id.split('/')
+        self.session_id = int(parts[1])
+        LOG.debug('Login to %s as %s succeded with namespace %d' %
+                    (self.hostname, self.username, self.session_id))
 
     def list_objects(self, rad_object):
         url = '{}/{}?_rad_detail'.format(self.url, rad_object.href)

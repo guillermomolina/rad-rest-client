@@ -14,6 +14,24 @@
 
 
 import argparse
+import getpass
+import logging
+from rad.api.authentication import RADSession
+
+LOG = logging.getLogger(__name__)
+
+class Password:
+
+    DEFAULT = 'Prompt if not specified'
+
+    def __init__(self, value):
+        if value == self.DEFAULT:
+            value = getpass.getpass()
+        self.value = value
+
+    def __str__(self):
+        return self.value
+
 
 class SubcommandLogin:
     name = 'login'
@@ -22,11 +40,36 @@ class SubcommandLogin:
     @staticmethod
     def init_parser(container_subparsers, parent_parser):
         parser = container_subparsers.add_parser(SubcommandLogin.name,
-            aliases=SubcommandLogin.aliases,
-            parents=[parent_parser],
-            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-            description='SubcommandLogin to remnote rad server',
-            help='SubcommandLogin containers')
+                                                 aliases=SubcommandLogin.aliases,
+                                                 parents=[parent_parser],
+                                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                                 description='Login to RAD REST server',
+                                                 help='Login to RAD REST server')
+        parser.add_argument('hostname',
+                            metavar='hostname',
+                            help='Hostname or ip address for RAD REST server')
+        parser.add_argument('-p', '--port',
+                            type=int,
+                            default=6788,
+                            help='port for RAD REST server')
+        parser.add_argument('username',
+                            help='Login username')
+        parser.add_argument('--password', type=Password,
+                            default=Password.DEFAULT,
+                            help='Specify password')
+        parser.add_argument('--ssl-cert-verify',
+                            action='store_true',
+                            help='Verify SSL certificate')
+        parser.add_argument('--ssl-cert-path',
+                            help='Path for CA SSL certificate')
 
     def __init__(self, options):
-        print('ok')
+        verify = options.ssl_cert_verify
+        if verify is None:
+            if options.ssl_cert_path is not None:
+                verify = True
+            else:
+                verify = False
+        session = RADSession(options.hostname, options.port, options.username, str(options.password),
+                   ssl_cert_verify=verify, ssl_cert_path=options.ssl_cert_path)
+        session.login()
