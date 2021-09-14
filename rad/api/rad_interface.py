@@ -29,6 +29,7 @@ class RADInterface(object):
         self.rad_instance_id = None
         if href is not None:
             self.href = href
+        self.json = None
 
     @property
     def href(self):

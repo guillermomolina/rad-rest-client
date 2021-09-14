@@ -19,7 +19,7 @@ import os
 import pickle
 import requests
 
-from rad import RADError
+from rad import RADError, RADException
 from rad.api.rad_interface import RADInterface
 from rad.api.rad_response import RADResponse
 from rad.api.authentication import RAD_NAMESPACE, RAD_API_VERSION
@@ -35,7 +35,7 @@ class RADSession(RADInterface):
         self.hostname = hostname
         self.port = port
         self.verify = ssl_cert_verify
-        if self.verify and ssl_cert_path is not None:
+        if ssl_cert_path is not None:
             self.verify = ssl_cert_path
 
         self.session = None
@@ -70,6 +70,8 @@ class RADSession(RADInterface):
             if last_modification < self.max_session_time:
                 with open(self.session_file, "rb") as f:
                     self.session = pickle.load(f)
+                    self.verify = pickle.load(f)
+                    self.rad_instance_id = pickle.load(f)
                     was_read_from_cache = True
                     LOG.debug("Loaded session from cache (last access %ds ago) "
                               % last_modification)
@@ -86,6 +88,8 @@ class RADSession(RADInterface):
     def save_session(self):
         with open(self.session_file, "wb") as f:
             pickle.dump(self.session, f)
+            pickle.dump(self.verify, f)
+            pickle.dump(self.rad_instance_id, f)
             LOG.debug("Saved session to cache")
 
     def request(self, method, path=None, **kwargs):
@@ -110,11 +114,13 @@ class RADSession(RADInterface):
                       (self.hostname, self.username))
             raise RADError(message='Login Failed')
         self.href = response.payload.get('href')
+        self.save_session()
         LOG.debug('Login to %s as %s succeded with namespace with href %s' %
                   (self.hostname, username, self.href))
 
     def list_objects(self, rad_object):
-        # TODO test rad_instance_id is None ???
+        if rad_object.rad_instance_id is not None:
+            raise RADException('Can not list instances from an instance')
         rad_object.rad_session = self
         response = rad_object.request('GET', '?_rad_detail')
         if response.status != 'success':
@@ -129,7 +135,8 @@ class RADSession(RADInterface):
         return output
 
     def get_object(self, rad_object):
-        # TODO test rad_instance_id is not None ???
+        if rad_object.rad_instance_id is None:
+            raise RADException('Can not get instance from a collection')
         rad_object.rad_session = self
         response = rad_object.request('GET', '?_rad_detail')
         if response.status != 'success':

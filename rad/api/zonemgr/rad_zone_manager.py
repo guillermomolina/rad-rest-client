@@ -29,6 +29,7 @@ class RADZoneManager(RADInterface):
             self.load(payload)
 
     def load(self, payload):
+        self.json = payload
         self.evacuationState = payload.get('evacuationState')
 
     def create(self, name, path=None, template=None):

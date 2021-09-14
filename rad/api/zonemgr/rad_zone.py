@@ -32,6 +32,7 @@ class RADZone(RADInterface):
             self.load(payload)
 
     def load(self, payload):
+        self.json = payload
         self.id = payload.get('id')
         self.name = payload.get('name')
         self.brand = payload.get('brand')
