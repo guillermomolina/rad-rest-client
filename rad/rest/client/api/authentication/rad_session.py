@@ -40,7 +40,7 @@ class RADSession(RADInterface):
 
         self.session = None
         self.session_file = '/tmp/{}_{}.dat'.format(hostname, port)
-        self.max_session_time = 30 * 60
+        self.max_session_time = 0
 
     def __enter__(self):
         self.load_session()
@@ -67,7 +67,7 @@ class RADSession(RADInterface):
         if os.path.exists(self.session_file) and not force:
             time = self.modification_date(self.session_file)
             last_modification = (datetime.datetime.now() - time).seconds
-            if last_modification < self.max_session_time:
+            if self.max_session_time == 0 or last_modification < self.max_session_time:
                 with open(self.session_file, "rb") as f:
                     self.session = pickle.load(f)
                     self.verify = pickle.load(f)
@@ -119,8 +119,8 @@ class RADSession(RADInterface):
                   (self.hostname, username, self.href))
 
     def list_objects(self, rad_object):
-        if rad_object.rad_instance_id is not None:
-            raise RADException('Can not list instances from an instance')
+        #if rad_object.rad_instance_id is not None:
+        #    raise RADException('Can not list instances from an instance')
         rad_object.rad_session = self
         response = rad_object.request('GET', '?_rad_detail')
         if response.status != 'success':
@@ -135,11 +135,12 @@ class RADSession(RADInterface):
         return output
 
     def get_object(self, rad_object):
-        if rad_object.rad_instance_id is None:
-            raise RADException('Can not get instance from a collection')
+        #if rad_object.rad_instance_id is None:
+        #    raise RADException('Can not get instance from a collection')
         rad_object.rad_session = self
         response = rad_object.request('GET', '?_rad_detail')
         if response.status != 'success':
+            LOG.error(response.status)
             raise RADError(message='Request Failed')
         item = response.payload
         collection_class = rad_object.__class__
