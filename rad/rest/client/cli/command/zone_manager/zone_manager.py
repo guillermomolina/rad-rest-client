@@ -15,6 +15,7 @@
 import argparse
 
 from rad.rest.client.cli.command.zone_manager.create import CommandZoneManagerCreate
+from rad.rest.client.cli.command.zone_manager.import_config import CommandZoneManagerImportConfig
 from rad.rest.client.cli.command.zone_manager.delete import CommandZoneManagerDelete
 
 class CommandZoneManager:
@@ -23,7 +24,8 @@ class CommandZoneManager:
 
     commands = {
         CommandZoneManagerCreate.name: CommandZoneManagerCreate,
-        CommandZoneManagerDelete.name: CommandZoneManagerDelete
+        CommandZoneManagerDelete.name: CommandZoneManagerDelete,
+        CommandZoneManagerImportConfig.name: CommandZoneManagerImportConfig
     }
 
     @staticmethod

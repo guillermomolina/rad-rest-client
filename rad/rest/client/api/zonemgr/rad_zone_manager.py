@@ -12,10 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
+
 from rad.rest.client import RADError
 from rad.rest.client.api.rad_response import RADResponse
 from rad.rest.client.api.zonemgr import RAD_NAMESPACE
 from rad.rest.client.api.rad_interface import RADInterface
+
+LOG = logging.getLogger(__name__)
 
 
 class RADZoneManager(RADInterface):
@@ -34,7 +38,7 @@ class RADZoneManager(RADInterface):
 
     def create(self, name, path=None, template=None):
         json_body = {
-            'name': name, 
+            'name': name,
             'path': path,
             'template': template
         }
@@ -47,12 +51,16 @@ class RADZoneManager(RADInterface):
     def import_config(self, noexecute, name, configuration):
         json_body = {
             'noexecute': noexecute,
-            'name': name, 
-            'configuration': configuration
+            'name': name,
+            'configuration': [configuration]
         }
 
-        response = self.request('PUT', '/_rad_method/importConfig', json=json_body)
+        response = self.request(
+            'PUT', '/_rad_method/importConfig', json=json_body)
         if response.status != 'success':
+            LOG.error(response.status)
+            LOG.error(response.payload.get('code'))
+            LOG.error(response.payload.get('stderr'))
             raise RADError(message=response.payload.get('stderr'))
         return response
 
