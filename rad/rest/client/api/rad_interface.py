@@ -14,8 +14,8 @@
 
 import logging
 
-from rad.exceptions import RADError, RADException
-from rad.api.rad_response import RADResponse
+from rad.rest.client import RADError, RADException
+from rad.rest.client.api.rad_response import RADResponse
 
 LOG = logging.getLogger(__name__)
 

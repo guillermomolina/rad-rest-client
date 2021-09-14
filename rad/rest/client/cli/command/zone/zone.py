@@ -14,7 +14,7 @@
 
 import argparse
 
-from .command_zone_list import CommandZoneList
+from rad.rest.client.cli.command.zone.list import CommandZoneList
 
 class CommandZone:
     name = 'zone'

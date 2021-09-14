@@ -16,7 +16,7 @@
 import argparse
 import getpass
 import logging
-from rad.api.authentication import RADSession
+from rad.rest.client.api.authentication import RADSession
 
 LOG = logging.getLogger(__name__)
 

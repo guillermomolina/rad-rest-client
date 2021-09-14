@@ -24,7 +24,7 @@ def get_lookup():
     '''get version by way of the version file
     '''
     lookup = dict()
-    version_file = os.path.join('rad', 'version.py')
+    version_file = os.path.join('rad', 'rest', 'client', 'version.py')
     with open(version_file) as filey:
         exec(filey.read(), lookup)
     return lookup
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         install_requires=INSTALL_REQUIRES,
         entry_points={
             'console_scripts': [
-                'rad = rad.cli.main:main'
+                'rad = rad.rest.client.cli.main:main'
             ]
         },
         classifiers=[

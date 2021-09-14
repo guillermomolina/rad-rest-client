@@ -12,25 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-from pathlib import Path
-
-from rad.rest.client.api.manager import Manager
-from rad.rest.client import RADError, RADException
-from rad.rest.client.util.zfs import zfs_exists, zfs_get, zfs_is_filesystem
-
-zfs = 'rpool/my/cool/zfs/directory'
-directory = '/my_cool_zfs_directory'
-
-
-class TestAPI(unittest.TestCase):
-    def setUp(self):
-        return super().setUp()
-
-    def tearDown(self):
-        return super().tearDown()
-
-
-
-if __name__ == '__main__':
-    unittest.main()
+from .zone import CommandZone

@@ -12,7 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-RAD_NAMESPACE = 'authentication'
-RAD_API_VERSION = '1.0'
-
-from .rad_session import RADSession
+from .rad import CommandRAD

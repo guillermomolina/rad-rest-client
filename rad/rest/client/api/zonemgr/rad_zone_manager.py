@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from rad import RADError
-from rad.api.rad_response import RADResponse
-from rad.api.zonemgr import RAD_NAMESPACE
-from rad.api.rad_interface import RADInterface
+from rad.rest.client import RADError
+from rad.rest.client.api.rad_response import RADResponse
+from rad.rest.client.api.zonemgr import RAD_NAMESPACE
+from rad.rest.client.api.rad_interface import RADInterface
 
 
 class RADZoneManager(RADInterface):

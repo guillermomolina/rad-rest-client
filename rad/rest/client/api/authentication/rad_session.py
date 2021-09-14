@@ -19,10 +19,10 @@ import os
 import pickle
 import requests
 
-from rad import RADError, RADException
-from rad.api.rad_interface import RADInterface
-from rad.api.rad_response import RADResponse
-from rad.api.authentication import RAD_NAMESPACE, RAD_API_VERSION
+from rad.rest.client import RADError, RADException
+from rad.rest.client.api.rad_interface import RADInterface
+from rad.rest.client.api.rad_response import RADResponse
+from rad.rest.client.api.authentication import RAD_NAMESPACE, RAD_API_VERSION
 
 LOG = logging.getLogger(__name__)
 

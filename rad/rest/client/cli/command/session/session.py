@@ -14,7 +14,7 @@
 
 import argparse
 
-from .command_session_login import CommandSessionLogin
+from rad.rest.client.cli.command.session.login import CommandSessionLogin
 
 class CommandSession:
     name = 'session'

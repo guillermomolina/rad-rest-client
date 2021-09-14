@@ -16,9 +16,9 @@
 import argparse
 import logging
 from typing import OrderedDict
-from rad.lib.print import print_table
-from rad.api.authentication import RADSession
-from rad.api.zonemgr import RADZone
+from rad.rest.client.util.print import print_table
+from rad.rest.client.api.authentication import RADSession
+from rad.rest.client.api.zonemgr import RADZone
 
 LOG = logging.getLogger(__name__)
 

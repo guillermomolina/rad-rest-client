@@ -14,9 +14,9 @@
 
 import logging
 
-from rad.api.zonemgr import RADZoneManager
-from rad.api.zonemgr import RADZone
-from rad.api.authentication import RADSession
+from rad.rest.client.api.zonemgr import RADZoneManager
+from rad.rest.client.api.zonemgr import RADZone
+from rad.rest.client.api.authentication import RADSession
 
 if __name__ == '__main__':
     logging.basicConfig(level='DEBUG')

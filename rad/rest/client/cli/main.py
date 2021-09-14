@@ -12,4 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .command_zone import CommandZone
+from rad.rest.client.cli.command import CommandRAD
+
+def main():
+    CommandRAD()
+
+
+if __name__ == '__main__':
+    main()

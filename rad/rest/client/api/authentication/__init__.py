@@ -12,11 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .rad_cli import RADCLI
+RAD_NAMESPACE = 'com.oracle.solaris.rad.authentication'
+RAD_API_VERSION = '1.0'
 
-def main():
-    RADCLI()
-
-
-if __name__ == '__main__':
-    main()
+from .rad_session import RADSession

@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from rad.api.zonemgr import RAD_NAMESPACE
-from rad.api.rad_interface import RADInterface
+from rad.rest.client.api.zonemgr import RAD_NAMESPACE
+from rad.rest.client.api.rad_interface import RADInterface
 
 
 
