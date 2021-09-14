@@ -70,7 +70,6 @@ class RADSession(RADInterface):
             if self.max_session_time == 0 or last_modification < self.max_session_time:
                 with open(self.session_file, "rb") as f:
                     self.session = pickle.load(f)
-                    self.verify = pickle.load(f)
                     self.rad_instance_id = pickle.load(f)
                     was_read_from_cache = True
                     LOG.debug("Loaded session from cache (last access %ds ago) "
@@ -88,7 +87,6 @@ class RADSession(RADInterface):
     def save_session(self):
         with open(self.session_file, "wb") as f:
             pickle.dump(self.session, f)
-            pickle.dump(self.verify, f)
             pickle.dump(self.rad_instance_id, f)
             LOG.debug("Saved session to cache")
 
@@ -111,7 +109,7 @@ class RADSession(RADInterface):
         response = self.request("POST", json=config_json)
         if response.status != 'success':
             LOG.debug('Login to %s as %s failed' %
-                      (self.hostname, self.username))
+                      (self.hostname, username))
             raise RADError(message='Login Failed')
         self.href = response.payload.get('href')
         self.save_session()
