@@ -69,3 +69,13 @@ class RADInterface(object):
             raise RADError('rad_session is undefined')
         res = self.rad_session.session.request(method, url, **kwargs)
         return RADResponse(res)
+
+    def rad_method(self, method, json_body, **kwargs):
+        response = self.request(
+            'PUT', '/_rad_method/{}'.format(method), json=json_body, **kwargs)
+        if response.status != 'success':
+            LOG.error(response.status)
+            LOG.error(response.payload.get('code'))
+            LOG.error(response.payload.get('stderr'))
+            raise RADError(message=response.payload.get('stderr'))
+        return response

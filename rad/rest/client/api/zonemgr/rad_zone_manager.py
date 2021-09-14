@@ -43,10 +43,7 @@ class RADZoneManager(RADInterface):
             'template': template
         }
 
-        response = self.request('PUT', '/_rad_method/create', json=json_body)
-        if response.status != 'success':
-            raise RADError(message='Request Failed')
-        return response
+        return self.rad_method('create', json_body)
 
     def import_config(self, noexecute, name, configuration):
         json_body = {
@@ -55,19 +52,9 @@ class RADZoneManager(RADInterface):
             'configuration': [configuration]
         }
 
-        response = self.request(
-            'PUT', '/_rad_method/importConfig', json=json_body)
-        if response.status != 'success':
-            LOG.error(response.status)
-            LOG.error(response.payload.get('code'))
-            LOG.error(response.payload.get('stderr'))
-            raise RADError(message=response.payload.get('stderr'))
-        return response
+        return self.rad_method('importConfig', json_body)
 
     def delete(self, name):
         json_body = {'name': name}
 
-        response = self.request('PUT', '/_rad_method/delete', json=json_body)
-        if response.status != 'success':
-            raise RADError(message='Request Failed')
-        return response
+        return self.rad_method('delete', json_body)
