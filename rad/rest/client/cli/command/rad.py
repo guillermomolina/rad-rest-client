@@ -54,7 +54,7 @@ class CommandRAD:
                             help='Print version information and quit',
                             action='version',
                             version='%(prog)s version ' + __version__)
-        parser.add_argument('-l', '--log-level',
+        parser.add_argument('-L', '--log-level',
                             help='Set the logging level ("debug"|"info"|"warn"|"error"|"fatal")',
                             choices=[
                                 'debug',
@@ -69,13 +69,16 @@ class CommandRAD:
         parser.add_argument('-D', '--debug',
                             help='Enable debug mode',
                             action='store_true')
-        parser.add_argument('-q', '--quiet',
+        parser.add_argument('-Q', '--quiet',
                             help='Enable quiet mode',
                             action='store_true')
+        parser.add_argument('-Z', '--protocol',
+                            default='https',
+                            help='Protocol for RAD REST server')
         parser.add_argument('-H', '--hostname',
                             required=True,
                             help='Hostname or ip address for RAD REST server')
-        parser.add_argument('-p', '--port',
+        parser.add_argument('-P', '--port',
                             type=int,
                             default=6788,
                             help='Port for RAD REST server')

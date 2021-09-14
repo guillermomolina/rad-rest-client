@@ -73,7 +73,7 @@ class CommandZoneList:
                             help='Specify the sort order in the table')
 
     def __init__(self, options):
-        with RADSession(options.hostname, options.port) as session:
+        with RADSession(options.hostname, protocol=options.protocol, port=options.port) as session:
             zone_instances = session.list_objects(RADZone())
             # get dictionaries
             zones = [zone.json for zone in zone_instances]

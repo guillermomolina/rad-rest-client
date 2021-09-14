@@ -66,6 +66,6 @@ class CommandSessionLogin:
                 verify = True
             else:
                 verify = False
-        with RADSession(options.hostname, options.port,
+        with RADSession(options.hostname, protocol=options.protocol, port=options.port,
                         ssl_cert_verify=verify, ssl_cert_path=options.ssl_cert_path) as session:
             session.login(options.username, str(options.password))

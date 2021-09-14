@@ -43,6 +43,6 @@ class CommandZoneManagerCreate:
                             help='Specify the zone name')
 
     def __init__(self, options):
-        with RADSession(options.hostname, options.port) as session:
+        with RADSession(options.hostname, protocol=options.protocol, port=options.port) as session:
             zone_manager = session.get_object(RADZoneManager())
             zone_manager.create(options.zonename, options.path, options.template)

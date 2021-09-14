@@ -46,7 +46,7 @@ class CommandZoneManagerImportConfig:
 
     def __init__(self, options):
         try:
-            with RADSession(options.hostname, options.port) as session:
+            with RADSession(options.hostname, protocol=options.protocol, port=options.port) as session:
                 zone_manager = session.get_object(RADZoneManager())
                 configuration = options.config
                 if options.file is not None:

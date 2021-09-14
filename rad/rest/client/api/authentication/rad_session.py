@@ -18,6 +18,7 @@ import datetime
 import os
 import pickle
 import requests
+from pathlib import Path
 
 from rad.rest.client import RADError, RADException
 from rad.rest.client.api.rad_interface import RADInterface
@@ -27,11 +28,17 @@ from rad.rest.client.api.authentication import RAD_NAMESPACE, RAD_API_VERSION
 LOG = logging.getLogger(__name__)
 
 
+def modification_date(filename):
+    t = filename.stat().st_mtime
+    return datetime.datetime.fromtimestamp(t)
+
+
 class RADSession(RADInterface):
     RAD_COLLECTION = 'Session'
 
-    def __init__(self, hostname, port=6788, ssl_cert_verify=False, ssl_cert_path=None):
+    def __init__(self, hostname, protocol='https', port=6788, ssl_cert_verify=False, ssl_cert_path=None):
         super().__init__(RAD_NAMESPACE, RADSession.RAD_COLLECTION, RAD_API_VERSION)
+        self.protocol = protocol
         self.hostname = hostname
         self.port = port
         self.verify = ssl_cert_verify
@@ -39,12 +46,14 @@ class RADSession(RADInterface):
             self.verify = ssl_cert_path
 
         self.session = None
-        self.session_file = '/tmp/{}_{}.dat'.format(hostname, port)
         self.max_session_time = 0
+        filename = '~/.cache/rad/{}_{}_{}.dat'.format(
+            self.protocol, self.hostname, self.port)
+        self.session_filename = Path(filename).expanduser()
 
     def __enter__(self):
         self.load_session()
-        #self.login()
+        # self.login()
         return self
 
     def __exit__(self, exc_type, exc_value, tb):
@@ -55,7 +64,8 @@ class RADSession(RADInterface):
 
     @property
     def url(self):
-        url = 'https://%(hostname)s:%(port)s' % {
+        url = '%(protocol)s://%(hostname)s:%(port)s' % {
+            'protocol': self.protocol,
             'hostname': self.hostname,
             'port': self.port,
         }
@@ -64,11 +74,11 @@ class RADSession(RADInterface):
     def load_session(self, force=False):
         was_read_from_cache = False
         LOG.debug('Loading or generating session...')
-        if os.path.exists(self.session_file) and not force:
-            time = self.modification_date(self.session_file)
+        if self.session_filename.is_file() and not force:
+            time = modification_date(self.session_filename)
             last_modification = (datetime.datetime.now() - time).seconds
             if self.max_session_time == 0 or last_modification < self.max_session_time:
-                with open(self.session_file, "rb") as f:
+                with self.session_filename.open("rb") as f:
                     self.session = pickle.load(f)
                     self.rad_instance_id = pickle.load(f)
                     was_read_from_cache = True
@@ -80,15 +90,16 @@ class RADSession(RADInterface):
             LOG.debug('Created new session')
             self.save_session()
 
-    def modification_date(self, filename):
-        t = os.path.getmtime(filename)
-        return datetime.datetime.fromtimestamp(t)
-
     def save_session(self):
-        with open(self.session_file, "wb") as f:
+        parent = self.session_filename.parent
+        if not parent.is_dir():
+            parent.mkdir(parents=True)
+        parent.chmod(0o700)
+        with self.session_filename.open("wb") as f:
             pickle.dump(self.session, f)
             pickle.dump(self.rad_instance_id, f)
             LOG.debug("Saved session to cache")
+        self.session_filename.chmod(0o600)
 
     def request(self, method, path=None, **kwargs):
         if path is None:
@@ -117,7 +128,7 @@ class RADSession(RADInterface):
                   (self.hostname, username, self.href))
 
     def list_objects(self, rad_object):
-        #if rad_object.rad_instance_id is not None:
+        # if rad_object.rad_instance_id is not None:
         #    raise RADException('Can not list instances from an instance')
         rad_object.rad_session = self
         response = rad_object.request('GET', '?_rad_detail')
@@ -133,7 +144,7 @@ class RADSession(RADInterface):
         return output
 
     def get_object(self, rad_object):
-        #if rad_object.rad_instance_id is None:
+        # if rad_object.rad_instance_id is None:
         #    raise RADException('Can not get instance from a collection')
         rad_object.rad_session = self
         response = rad_object.request('GET', '?_rad_detail')
