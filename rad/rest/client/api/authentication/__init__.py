@@ -15,4 +15,4 @@
 RAD_NAMESPACE = 'com.oracle.solaris.rad.authentication'
 RAD_API_VERSION = '1.0'
 
-from .rad_session import RADSession
+from .api_session import ApiSession

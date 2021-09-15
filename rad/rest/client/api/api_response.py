@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class RADResponse(object):
+class ApiResponse(object):
     def __init__(self, rsp):
         self.rsp = rsp
         self.status_code = rsp.status_code

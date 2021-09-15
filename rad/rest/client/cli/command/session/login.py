@@ -16,7 +16,7 @@
 import argparse
 import getpass
 import logging
-from rad.rest.client.api.authentication import RADSession
+from rad.rest.client.api.authentication import ApiSession
 
 LOG = logging.getLogger(__name__)
 
@@ -66,6 +66,6 @@ class CommandSessionLogin:
                 verify = True
             else:
                 verify = False
-        with RADSession(options.hostname, protocol=options.protocol, port=options.port,
+        with ApiSession(options.hostname, protocol=options.protocol, port=options.port,
                         ssl_cert_verify=verify, ssl_cert_path=options.ssl_cert_path) as session:
             session.login(options.username, str(options.password))

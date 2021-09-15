@@ -13,22 +13,17 @@
 # limitations under the License.
 
 from rad.rest.client.api.zfsmgr import RAD_NAMESPACE
-from rad.rest.client.api.rad_interface import RADInterface
+from rad.rest.client.api.api_interface import ApiInterface
 
 
-class RADZfsDataset(RADInterface):
-    RAD_COLLECTION = 'ZfsDataset'
+class ApiZpool(ApiInterface):
+    RAD_COLLECTION = 'Zpool'
 
     def __init__(self, payload=None, *args, **kwargs):
-        super().__init__(RAD_NAMESPACE, RADZfsDataset.RAD_COLLECTION,
+        super().__init__(RAD_NAMESPACE, ApiZpool.RAD_COLLECTION,
                          rad_api_version='1.0', *args, **kwargs)
         if payload is not None:
             self.load(payload)
 
     def load(self, payload):
         self.json = payload
-
-    def get_filesystems(self, recursive=False):
-        json_body = {"recursive": recursive}
-
-        return self.rad_method('get_filesystems', json_body)

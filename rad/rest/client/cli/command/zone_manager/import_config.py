@@ -15,8 +15,8 @@
 
 import argparse
 import logging
-from rad.rest.client.api.authentication import RADSession
-from rad.rest.client.api.zonemgr import RADZoneManager
+from rad.rest.client.api.authentication import ApiSession
+from rad.rest.client.api.zonemgr import ApiZoneManager
 
 LOG = logging.getLogger(__name__)
 
@@ -46,8 +46,8 @@ class CommandZoneManagerImportConfig:
 
     def __init__(self, options):
         try:
-            with RADSession(options.hostname, protocol=options.protocol, port=options.port) as session:
-                zone_manager = session.get_object(RADZoneManager())
+            with ApiSession(options.hostname, protocol=options.protocol, port=options.port) as session:
+                zone_manager = session.get_object(ApiZoneManager())
                 configuration = options.config
                 if options.file is not None:
                     with open(options.file, "r") as f:

@@ -21,8 +21,8 @@ import requests
 from pathlib import Path
 
 from rad.rest.client import RADError, RADException
-from rad.rest.client.api.rad_interface import RADInterface
-from rad.rest.client.api.rad_response import RADResponse
+from rad.rest.client.api.api_interface import ApiInterface
+from rad.rest.client.api.api_response import ApiResponse
 from rad.rest.client.api.authentication import RAD_NAMESPACE, RAD_API_VERSION
 
 LOG = logging.getLogger(__name__)
@@ -33,11 +33,11 @@ def modification_date(filename):
     return datetime.datetime.fromtimestamp(t)
 
 
-class RADSession(RADInterface):
+class ApiSession(ApiInterface):
     RAD_COLLECTION = 'Session'
 
     def __init__(self, hostname, protocol='https', port=6788, ssl_cert_verify=False, ssl_cert_path=None):
-        super().__init__(RAD_NAMESPACE, RADSession.RAD_COLLECTION, RAD_API_VERSION)
+        super().__init__(RAD_NAMESPACE, ApiSession.RAD_COLLECTION, RAD_API_VERSION)
         self.protocol = protocol
         self.hostname = hostname
         self.port = port
@@ -107,7 +107,7 @@ class RADSession(RADInterface):
         else:
             url = '{}/{}{}'.format(self.url, self.href, path)
         res = self.session.request(method, url, **kwargs)
-        return RADResponse(res)
+        return ApiResponse(res)
 
     def login(self, username, password):
         config_json = {
