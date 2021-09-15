@@ -14,5 +14,5 @@
 
 RAD_NAMESPACE = 'com.oracle.solaris.rad.zfsmgr'
 
-from .api_zfs_dataset import ApiZfsDataset
-from .api_zpool import ApiZpool
+from .zfs_dataset import ZfsDataset
+from .zpool import Zpool

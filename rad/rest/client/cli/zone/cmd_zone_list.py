@@ -16,8 +16,8 @@
 import argparse
 import logging
 from rad.rest.client.util import print_table, order_dict_with_keys
-from rad.rest.client.api.authentication import ApiSession
-from rad.rest.client.api.zonemgr import ApiZone
+from rad.rest.client.api.authentication import Session
+from rad.rest.client.api.zonemgr import Zone
 
 LOG = logging.getLogger(__name__)
 
@@ -46,8 +46,8 @@ class CmdZoneList:
                             help='Specify the sort order in the table')
 
     def __init__(self, options):
-        with ApiSession(options.hostname, protocol=options.protocol, port=options.port) as session:
-            zone_instances = session.list_objects(ApiZone())
+        with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
+            zone_instances = session.list_objects(Zone())
             # get dictionaries
             zones = [zone.json for zone in zone_instances]
 

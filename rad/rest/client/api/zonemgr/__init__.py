@@ -14,5 +14,5 @@
 
 RAD_NAMESPACE = 'com.oracle.solaris.rad.zonemgr'
 
-from .api_zone import ApiZone
-from .api_zone_manager import ApiZoneManager
+from .zone import Zone
+from .zone_manager import ZoneManager

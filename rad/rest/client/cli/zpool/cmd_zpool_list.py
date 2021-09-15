@@ -16,8 +16,8 @@
 import argparse
 import logging
 from rad.rest.client.util.print import print_table
-from rad.rest.client.api.authentication import ApiSession
-from rad.rest.client.api.zfsmgr import ApiZpool
+from rad.rest.client.api.authentication import Session
+from rad.rest.client.api.zfsmgr import Zpool
 
 LOG = logging.getLogger(__name__)
 
@@ -39,8 +39,8 @@ class CmdZpoolList:
                             help='Specify the sort order in the table')
 
     def __init__(self, options):
-        with ApiSession(options.hostname, protocol=options.protocol, port=options.port) as session:
-            zpool_instances = session.list_objects(ApiZpool())
+        with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
+            zpool_instances = session.list_objects(Zpool())
             # get dictionaries
             zpools = [{ 'name': zpool.rad_instance_id} for zpool in zpool_instances]
 

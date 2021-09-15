@@ -15,8 +15,8 @@
 
 import argparse
 import logging
-from rad.rest.client.api.authentication import ApiSession
-from rad.rest.client.api.zonemgr import ApiZoneManager
+from rad.rest.client.api.authentication import Session
+from rad.rest.client.api.zonemgr import ZoneManager
 
 LOG = logging.getLogger(__name__)
 
@@ -43,6 +43,6 @@ class CmdZoneManagerCreate:
                             help='Specify the zone name')
 
     def __init__(self, options):
-        with ApiSession(options.hostname, protocol=options.protocol, port=options.port) as session:
-            zone_manager = session.get_object(ApiZoneManager())
+        with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
+            zone_manager = session.get_object(ZoneManager())
             zone_manager.create(options.zonename, options.path, options.template)

@@ -15,18 +15,18 @@
 import logging
 
 from rad.rest.client import RADError
-from rad.rest.client.api.api_response import ApiResponse
+from rad.rest.client.api.rad_response import RADResponse
 from rad.rest.client.api.zonemgr import RAD_NAMESPACE
-from rad.rest.client.api.api_interface import ApiInterface
+from rad.rest.client.api.rad_interface import RADInterface
 
 LOG = logging.getLogger(__name__)
 
 
-class ApiZoneManager(ApiInterface):
+class ZoneManager(RADInterface):
     RAD_COLLECTION = 'ZoneManager'
 
     def __init__(self, *args, **kwargs):
-        super().__init__(RAD_NAMESPACE, ApiZoneManager.RAD_COLLECTION,
+        super().__init__(RAD_NAMESPACE, ZoneManager.RAD_COLLECTION,
                          rad_api_version='1.0', *args, **kwargs)
         self.evacuationState = None
 

@@ -15,12 +15,12 @@
 import logging
 
 from rad.rest.client import RADError, RADException
-from rad.rest.client.api.api_response import ApiResponse
+from rad.rest.client.api.rad_response import RADResponse
 
 LOG = logging.getLogger(__name__)
 
 
-class ApiInterface(object):
+class RADInterface(object):
     def __init__(self, rad_namespace, rad_collection, rad_api_version=None, href=None, rad_session=None, json=None):
         self.rad_namespace = rad_namespace
         self.rad_collection = rad_collection
@@ -73,7 +73,7 @@ class ApiInterface(object):
         if self.rad_session is None:
             raise RADError('rad_session is undefined')
         res = self.rad_session.session.request(method, url, **kwargs)
-        return ApiResponse(res)
+        return RADResponse(res)
 
     def rad_method(self, method, json_body, **kwargs):
         response = self.request(

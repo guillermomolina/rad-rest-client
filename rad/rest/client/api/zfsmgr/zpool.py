@@ -13,12 +13,12 @@
 # limitations under the License.
 
 from rad.rest.client.api.zfsmgr import RAD_NAMESPACE
-from rad.rest.client.api.api_interface import ApiInterface
+from rad.rest.client.api.rad_interface import RADInterface
 
 
-class ApiZpool(ApiInterface):
+class Zpool(RADInterface):
     RAD_COLLECTION = 'Zpool'
 
     def __init__(self, *args, **kwargs):
-        super().__init__(RAD_NAMESPACE, ApiZpool.RAD_COLLECTION,
+        super().__init__(RAD_NAMESPACE, Zpool.RAD_COLLECTION,
                          rad_api_version='1.0', *args, **kwargs)

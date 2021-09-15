@@ -13,14 +13,14 @@
 # limitations under the License.
 
 from rad.rest.client.api.zfsmgr import RAD_NAMESPACE
-from rad.rest.client.api.api_interface import ApiInterface
+from rad.rest.client.api.rad_interface import RADInterface
 
 
-class ApiZfsDataset(ApiInterface):
+class ZfsDataset(RADInterface):
     RAD_COLLECTION = 'ZfsDataset'
 
     def __init__(self, *args, **kwargs):
-        super().__init__(RAD_NAMESPACE, ApiZfsDataset.RAD_COLLECTION,
+        super().__init__(RAD_NAMESPACE, ZfsDataset.RAD_COLLECTION,
                          rad_api_version='1.0', *args, **kwargs)
 
     def get_filesystems(self, recursive=False):

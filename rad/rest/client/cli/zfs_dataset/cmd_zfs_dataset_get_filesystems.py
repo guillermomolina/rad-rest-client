@@ -16,8 +16,8 @@
 import argparse
 import logging
 from rad.rest.client.util.print import print_table
-from rad.rest.client.api.authentication import ApiSession
-from rad.rest.client.api.zfsmgr import ApiZfsDataset
+from rad.rest.client.api.authentication import Session
+from rad.rest.client.api.zfsmgr import ZfsDataset
 
 
 class CmdZfsDatasetGetFilesystems:
@@ -34,10 +34,13 @@ class CmdZfsDatasetGetFilesystems:
                                                  help='Get ZFS filesystems')
         parser.add_argument('-s', '--sort',
                             help='Sort the filesystems')
+        parser.add_argument('poolname',
+                            help='Name of the pool')
 
     def __init__(self, options):
-        with ApiSession(options.hostname, protocol=options.protocol, port=options.port) as session:
-            zfs_dataset = ApiZfsDataset()
+        with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
+            name_pattern = { 'name': options.poolname }
+            zfs_dataset = session.get_object(zfsmgr.ZfsDataset(), name_pattern)
             zfs_dataset.rad_session = session
             zfs_dataset.rad_instance_id = 'rpool'
             print(zfs_dataset.get_filesystems().payload)

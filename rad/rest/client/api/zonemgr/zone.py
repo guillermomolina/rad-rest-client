@@ -13,15 +13,15 @@
 # limitations under the License.
 
 from rad.rest.client.api.zonemgr import RAD_NAMESPACE
-from rad.rest.client.api.api_interface import ApiInterface
+from rad.rest.client.api.rad_interface import RADInterface
 
 
 
-class ApiZone(ApiInterface):
+class Zone(RADInterface):
     RAD_COLLECTION = 'Zone'
 
     def __init__(self, *args, **kwargs):
-        super().__init__(RAD_NAMESPACE, ApiZone.RAD_COLLECTION, rad_api_version='1.0', *args, **kwargs)
+        super().__init__(RAD_NAMESPACE, Zone.RAD_COLLECTION, rad_api_version='1.0', *args, **kwargs)
         self.id = None
         self.name = None
         self.brand = None
