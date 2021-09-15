@@ -20,14 +20,14 @@ from rad.rest.client.api.authentication import Session
 from rad.rest.client.api.zfsmgr import ZfsDataset
 
 
-class CmdZfsDatasetGetFilesystems:
+class CmdZfsGetFilesystems:
     name = 'get-filesystems'
     aliases = []
 
     @staticmethod
     def init_parser(container_subparsers, parent_parser):
-        parser = container_subparsers.add_parser(CmdZfsDatasetGetFilesystems.name,
-                                                 aliases=CmdZfsDatasetGetFilesystems.aliases,
+        parser = container_subparsers.add_parser(CmdZfsGetFilesystems.name,
+                                                 aliases=CmdZfsGetFilesystems.aliases,
                                                  parents=[parent_parser],
                                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                                  description='Get ZFS filesystems',

@@ -22,14 +22,14 @@ from rad.rest.client.api.zfsmgr import ZfsDataset
 
 LOG = logging.getLogger(__name__)
 
-class CmdZfsDatasetList:
+class CmdZfsList:
     name = 'list'
     aliases = ['ls']
 
     @staticmethod
     def init_parser(container_subparsers, parent_parser):
-        parser = container_subparsers.add_parser(CmdZfsDatasetList.name,
-                                                 aliases=CmdZfsDatasetList.aliases,
+        parser = container_subparsers.add_parser(CmdZfsList.name,
+                                                 aliases=CmdZfsList.aliases,
                                                  parents=[parent_parser],
                                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                                  description='List zfs_datasets',
@@ -40,6 +40,13 @@ class CmdZfsDatasetList:
                             help='Specify the sort order in the table')
 
     def __init__(self, options):
+        with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
+            zfs_dataset_instances = session.list_objects(ZfsDataset())
+            for zfs_dataset_instance in zfs_dataset_instances:
+                out = zfs_dataset_instance.get_props()
+                print(out)
+
+    def list(self, options):
         with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
             zfs_dataset_instances = session.list_objects(ZfsDataset())
             # get dictionaries

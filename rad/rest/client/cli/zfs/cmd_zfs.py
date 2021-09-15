@@ -14,23 +14,23 @@
 
 import argparse
 
-from rad.rest.client.cli.zfs_dataset.cmd_zfs_dataset_get_filesystems import CmdZfsDatasetGetFilesystems
-from rad.rest.client.cli.zfs_dataset.cmd_zfs_dataset_list import CmdZfsDatasetList
+from rad.rest.client.cli.zfs.cmd_zfs_get_filesystems import CmdZfsGetFilesystems
+from rad.rest.client.cli.zfs.cmd_zfs_list import CmdZfsList
 
-class CmdZfsDataset:
-    name = 'zfs-dataset'
+class CmdZfs:
+    name = 'zfs'
     aliases = []
 
     commands = {
-        CmdZfsDatasetGetFilesystems.name: CmdZfsDatasetGetFilesystems,
-        CmdZfsDatasetList.name: CmdZfsDatasetList
+        CmdZfsGetFilesystems.name: CmdZfsGetFilesystems,
+        CmdZfsList.name: CmdZfsList
     }
 
     @staticmethod
     def init_parser(oci_subparsers):
         parent_parser = argparse.ArgumentParser(add_help=False)
-        parser = oci_subparsers.add_parser(CmdZfsDataset.name,
-            aliases=CmdZfsDataset.aliases,
+        parser = oci_subparsers.add_parser(CmdZfs.name,
+            aliases=CmdZfs.aliases,
             parents=[parent_parser],
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
             description='Manage ZFS datasets',
@@ -41,9 +41,9 @@ class CmdZfsDataset:
             metavar='COMMAND',
             required=True)
 
-        for subcommand in CmdZfsDataset.commands.values():
+        for subcommand in CmdZfs.commands.values():
             subcommand.init_parser(subparsers, parent_parser)
 
     def __init__(self, options):
-        command = CmdZfsDataset.commands[options.subcommand]
+        command = CmdZfs.commands[options.subcommand]
         command(options)
