@@ -15,35 +15,37 @@
 
 import argparse
 import logging
+from urllib.parse import unquote
 from rad.rest.client.util.print import print_table
 from rad.rest.client.api.authentication import Session
 from rad.rest.client.api.zfsmgr import ZfsDataset
 
+LOG = logging.getLogger(__name__)
 
-class CmdZfsDatasetGetFilesystems:
-    name = 'get-filesystems'
-    aliases = []
+class CmdZfsDatasetList:
+    name = 'list'
+    aliases = ['ls']
 
     @staticmethod
     def init_parser(container_subparsers, parent_parser):
-        parser = container_subparsers.add_parser(CmdZfsDatasetGetFilesystems.name,
-                                                 aliases=CmdZfsDatasetGetFilesystems.aliases,
+        parser = container_subparsers.add_parser(CmdZfsDatasetList.name,
+                                                 aliases=CmdZfsDatasetList.aliases,
                                                  parents=[parent_parser],
                                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-                                                 description='Get ZFS filesystems',
-                                                 help='Get ZFS filesystems')
+                                                 description='List zfs_datasets',
+                                                 help='List zfs_datasets')
         parser.add_argument('-s', '--sort',
-                            help='Sort the filesystems')
-        parser.add_argument('poolname',
-                            help='Name of the pool')
+                            action='store_true',
+                            default=False,
+                            help='Specify the sort order in the table')
 
     def __init__(self, options):
         with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
-            zfs_dataset = ZfsDataset()
-            zfs_dataset.rad_session = session
-            zfs_dataset.rad_instance_id = 'rpool'
-            print(zfs_dataset.get_filesystems().payload)
+            zfs_dataset_instances = session.list_objects(ZfsDataset())
+            # get dictionaries
+            zfs_datasets = [{ 'name': unquote(zfs_dataset.rad_instance_id)} for zfs_dataset in zfs_dataset_instances]
 
-            name_pattern = { 'name': options.poolname }
-            out = session.list_objects(ZfsDataset())
-            print(out)
+            if options.sort:
+                zfs_datasets = sorted(zfs_datasets, key=lambda i: i['name'])
+
+            print_table(zfs_datasets)

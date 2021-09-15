@@ -29,11 +29,11 @@ class Zone(RADInterface):
         self.auxstate = None
         self.state = None
 
-    def load(self, payload):
-        self.id = payload.get('id')
-        self.name = payload.get('name')
-        self.brand = payload.get('brand')
-        self.uuid = payload.get('uuid')
-        self.auxstate = payload.get('auxstate')
-        self.state = payload.get('state')
+    def load(self):
+        self.id = self.json.get('id')
+        self.name = self.json.get('name')
+        self.brand = self.json.get('brand')
+        self.uuid = self.json.get('uuid')
+        self.auxstate = self.json.get('auxstate')
+        self.state = self.json.get('state')
         

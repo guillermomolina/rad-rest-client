@@ -127,11 +127,15 @@ class Session(RADInterface):
         LOG.debug('Login to %s as %s succeded with namespace with href %s' %
                   (self.hostname, username, self.href))
 
-    def list_objects(self, rad_object):
+    def list_objects(self, rad_object, detailed=True):
         # if rad_object.rad_instance_id is not None:
         #    raise RADException('Can not list instances from an instance')
         rad_object.rad_session = self
-        response = rad_object.request('GET', '?_rad_detail')
+        if detailed:
+            path = '?_rad_detail'
+        else:
+            path = None
+        response = rad_object.request('GET', path)
         if response.status != 'success':
             raise RADError(message='Request Failed')
         output = []
@@ -143,11 +147,15 @@ class Session(RADInterface):
             output.append(new_rad_object)
         return output
 
-    def get_object(self, rad_object):
+    def get_object(self, rad_object, detailed=True):
         # if rad_object.rad_instance_id is None:
         #    raise RADException('Can not get instance from a collection')
         rad_object.rad_session = self
-        response = rad_object.request('GET', '?_rad_detail')
+        if detailed:
+            path = '?_rad_detail'
+        else:
+            path = None
+        response = rad_object.request('GET', path)
         if response.status != 'success':
             LOG.error(response.status)
             raise RADError(message='Request Failed')

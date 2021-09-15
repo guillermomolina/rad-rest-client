@@ -15,6 +15,7 @@
 
 import argparse
 import logging
+from urllib.parse import unquote
 from rad.rest.client.util.print import print_table
 from rad.rest.client.api.authentication import Session
 from rad.rest.client.api.zfsmgr import Zpool
@@ -42,7 +43,7 @@ class CmdZpoolList:
         with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
             zpool_instances = session.list_objects(Zpool())
             # get dictionaries
-            zpools = [{ 'name': zpool.rad_instance_id} for zpool in zpool_instances]
+            zpools = [{ 'name': unquote(zpool.rad_instance_id)} for zpool in zpool_instances]
 
             if options.sort:
                 zpools = sorted(zpools, key=lambda i: i['name'])

@@ -30,8 +30,8 @@ class ZoneManager(RADInterface):
                          rad_api_version='1.0', *args, **kwargs)
         self.evacuationState = None
 
-    def load(self, payload):
-        self.evacuationState = payload.get('evacuationState')
+    def load(self):
+        self.evacuationState = self.json.get('evacuationState')
 
     def create(self, name, path=None, template=None):
         json_body = {

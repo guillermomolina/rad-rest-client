@@ -15,13 +15,15 @@
 import argparse
 
 from rad.rest.client.cli.zfs_dataset.cmd_zfs_dataset_get_filesystems import CmdZfsDatasetGetFilesystems
+from rad.rest.client.cli.zfs_dataset.cmd_zfs_dataset_list import CmdZfsDatasetList
 
 class CmdZfsDataset:
     name = 'zfs-dataset'
     aliases = []
 
     commands = {
-        CmdZfsDatasetGetFilesystems.name: CmdZfsDatasetGetFilesystems
+        CmdZfsDatasetGetFilesystems.name: CmdZfsDatasetGetFilesystems,
+        CmdZfsDatasetList.name: CmdZfsDatasetList
     }
 
     @staticmethod
