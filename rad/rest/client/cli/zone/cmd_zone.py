@@ -14,25 +14,21 @@
 
 import argparse
 
-from rad.rest.client.cli.command.zone_manager.create import CommandZoneManagerCreate
-from rad.rest.client.cli.command.zone_manager.import_config import CommandZoneManagerImportConfig
-from rad.rest.client.cli.command.zone_manager.delete import CommandZoneManagerDelete
+from rad.rest.client.cli.zone.cmd_zone_list import CmdZoneList
 
-class CommandZoneManager:
-    name = 'zone-manager'
+class CmdZone:
+    name = 'zone'
     aliases = []
 
     commands = {
-        CommandZoneManagerCreate.name: CommandZoneManagerCreate,
-        CommandZoneManagerDelete.name: CommandZoneManagerDelete,
-        CommandZoneManagerImportConfig.name: CommandZoneManagerImportConfig
+        CmdZoneList.name: CmdZoneList
     }
 
     @staticmethod
     def init_parser(oci_subparsers):
         parent_parser = argparse.ArgumentParser(add_help=False)
-        parser = oci_subparsers.add_parser(CommandZoneManager.name,
-            aliases=CommandZoneManager.aliases,
+        parser = oci_subparsers.add_parser(CmdZone.name,
+            aliases=CmdZone.aliases,
             parents=[parent_parser],
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
             description='Manage zones',
@@ -43,9 +39,9 @@ class CommandZoneManager:
             metavar='COMMAND',
             required=True)
 
-        for subcommand in CommandZoneManager.commands.values():
+        for subcommand in CmdZone.commands.values():
             subcommand.init_parser(subparsers, parent_parser)
 
     def __init__(self, options):
-        command = CommandZoneManager.commands[options.subcommand]
+        command = CmdZone.commands[options.subcommand]
         command(options)

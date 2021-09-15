@@ -48,14 +48,14 @@ def list_insert_sorted_by_key(list, dict_object, key):
     list.append(dict_object)
 
 
-class CommandZoneList:
+class CmdZoneList:
     name = 'list'
     aliases = ['ls']
 
     @staticmethod
     def init_parser(container_subparsers, parent_parser):
-        parser = container_subparsers.add_parser(CommandZoneList.name,
-                                                 aliases=CommandZoneList.aliases,
+        parser = container_subparsers.add_parser(CmdZoneList.name,
+                                                 aliases=CmdZoneList.aliases,
                                                  parents=[parent_parser],
                                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                                  description='List zones',

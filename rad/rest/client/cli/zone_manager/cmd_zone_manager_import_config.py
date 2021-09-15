@@ -21,14 +21,14 @@ from rad.rest.client.api.zonemgr import ApiZoneManager
 LOG = logging.getLogger(__name__)
 
 
-class CommandZoneManagerImportConfig:
+class CmdZoneManagerImportConfig:
     name = 'import-config'
     aliases = []
 
     @staticmethod
     def init_parser(container_subparsers, parent_parser):
-        parser = container_subparsers.add_parser(CommandZoneManagerImportConfig.name,
-                                                 aliases=CommandZoneManagerImportConfig.aliases,
+        parser = container_subparsers.add_parser(CmdZoneManagerImportConfig.name,
+                                                 aliases=CmdZoneManagerImportConfig.aliases,
                                                  parents=[parent_parser],
                                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                                  description='Import configuration to a zone',

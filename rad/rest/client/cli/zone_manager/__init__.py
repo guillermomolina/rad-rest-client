@@ -12,4 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .zfs_dataset import CommandZfsDataset
+from .cmd_zone_manager import CmdZoneManager

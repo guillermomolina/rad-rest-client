@@ -34,14 +34,14 @@ class Password:
         return self.value
 
 
-class CommandSessionLogin:
+class CmdSessionLogin:
     name = 'login'
     aliases = []
 
     @staticmethod
     def init_parser(container_subparsers, parent_parser):
-        parser = container_subparsers.add_parser(CommandSessionLogin.name,
-                                                 aliases=CommandSessionLogin.aliases,
+        parser = container_subparsers.add_parser(CmdSessionLogin.name,
+                                                 aliases=CmdSessionLogin.aliases,
                                                  parents=[parent_parser],
                                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                                  description='Login to RAD REST server',

@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from rad.rest.client.cli.command import CommandRAD
+from rad.rest.client.cli.cmd_rad import CmdRAD
 
 def main():
-    CommandRAD()
+    CmdRAD()
 
 
 if __name__ == '__main__':

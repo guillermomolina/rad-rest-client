@@ -17,10 +17,10 @@ import argparse
 import logging
 
 from rad.rest.client import __version__, RADException
-from rad.rest.client.cli.command.session import CommandSession
-from rad.rest.client.cli.command.zone import CommandZone
-from rad.rest.client.cli.command.zone_manager import CommandZoneManager
-from rad.rest.client.cli.command.zfs_dataset import CommandZfsDataset
+from rad.rest.client.cli.session import CmdSession
+from rad.rest.client.cli.zone import CmdZone
+from rad.rest.client.cli.zone_manager import CmdZoneManager
+from rad.rest.client.cli.zfs_dataset import CmdZfsDataset
 
 LOG = logging.getLogger(__name__)
 
@@ -44,8 +44,8 @@ class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
     pass
 
 
-class CommandRAD:
-    commands = [CommandSession, CommandZone, CommandZoneManager, CommandZfsDataset]
+class CmdRAD:
+    commands = [CmdSession, CmdZone, CmdZoneManager, CmdZfsDataset]
 
     def __init__(self):
         parser = argparse.ArgumentParser(
@@ -89,7 +89,7 @@ class CommandRAD:
             metavar='COMMAND',
             required=True)
 
-        for command in CommandRAD.commands:
+        for command in CmdRAD.commands:
             command.init_parser(subparsers)
 
         options = parser.parse_args()

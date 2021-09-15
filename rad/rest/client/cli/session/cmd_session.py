@@ -14,34 +14,34 @@
 
 import argparse
 
-from rad.rest.client.cli.command.zfs_dataset.get_filesystems import CommandZfsDatasetGetFilesystems
+from rad.rest.client.cli.session.cmd_session_login import CmdSessionLogin
 
-class CommandZfsDataset:
-    name = 'zfs-dataset'
+class CmdSession:
+    name = 'session'
     aliases = []
 
     commands = {
-        CommandZfsDatasetGetFilesystems.name: CommandZfsDatasetGetFilesystems
+        CmdSessionLogin.name: CmdSessionLogin
     }
 
     @staticmethod
     def init_parser(oci_subparsers):
         parent_parser = argparse.ArgumentParser(add_help=False)
-        parser = oci_subparsers.add_parser(CommandZfsDataset.name,
-            aliases=CommandZfsDataset.aliases,
+        parser = oci_subparsers.add_parser(CmdSession.name,
+            aliases=CmdSession.aliases,
             parents=[parent_parser],
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-            description='Manage ZFS datasets',
-            help='Manage ZFS datasets')
+            description='Manage sessions',
+            help='Manage sessions')
 
         subparsers = parser.add_subparsers(
             dest='subcommand',
             metavar='COMMAND',
             required=True)
 
-        for subcommand in CommandZfsDataset.commands.values():
+        for subcommand in CmdSession.commands.values():
             subcommand.init_parser(subparsers, parent_parser)
 
     def __init__(self, options):
-        command = CommandZfsDataset.commands[options.subcommand]
+        command = CmdSession.commands[options.subcommand]
         command(options)

@@ -12,4 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .zone_manager import CommandZoneManager
+from .cmd_zone import CmdZone

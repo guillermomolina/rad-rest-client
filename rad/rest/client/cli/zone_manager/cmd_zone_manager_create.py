@@ -21,22 +21,28 @@ from rad.rest.client.api.zonemgr import ApiZoneManager
 LOG = logging.getLogger(__name__)
 
 
-class CommandZoneManagerDelete:
-    name = 'delete'
+class CmdZoneManagerCreate:
+    name = 'create'
     aliases = []
 
     @staticmethod
     def init_parser(container_subparsers, parent_parser):
-        parser = container_subparsers.add_parser(CommandZoneManagerDelete.name,
-                                                 aliases=CommandZoneManagerDelete.aliases,
+        parser = container_subparsers.add_parser(CmdZoneManagerCreate.name,
+                                                 aliases=CmdZoneManagerCreate.aliases,
                                                  parents=[parent_parser],
                                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-                                                 description='Delete a zone',
-                                                 help='Delete a zone')
+                                                 description='Create a zone',
+                                                 help='Create a zone using a template')
+        parser.add_argument('-t', '--template',
+                            choices=['SYSDefault'],
+                            #default='SYSDefault',
+                            help='Specify the template name')
+        parser.add_argument('-p', '--path',
+                            help='Specify the zone path')
         parser.add_argument('zonename',
                             help='Specify the zone name')
 
     def __init__(self, options):
         with ApiSession(options.hostname, protocol=options.protocol, port=options.port) as session:
             zone_manager = session.get_object(ApiZoneManager())
-            zone_manager.delete(options.zonename)
+            zone_manager.create(options.zonename, options.path, options.template)
