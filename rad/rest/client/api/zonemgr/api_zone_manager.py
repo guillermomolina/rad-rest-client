@@ -25,15 +25,12 @@ LOG = logging.getLogger(__name__)
 class ApiZoneManager(ApiInterface):
     RAD_COLLECTION = 'ZoneManager'
 
-    def __init__(self, payload=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(RAD_NAMESPACE, ApiZoneManager.RAD_COLLECTION,
                          rad_api_version='1.0', *args, **kwargs)
         self.evacuationState = None
-        if payload is not None:
-            self.load(payload)
 
     def load(self, payload):
-        self.json = payload
         self.evacuationState = payload.get('evacuationState')
 
     def create(self, name, path=None, template=None):

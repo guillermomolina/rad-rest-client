@@ -139,7 +139,7 @@ class ApiSession(ApiInterface):
             collection_class = rad_object.__class__
             collection = collection_class.RAD_COLLECTION
             new_rad_object = collection_class(rad_session=self, href=item.get(
-                'href'), payload=item.get(collection))
+                'href'), json=item.get(collection))
             output.append(new_rad_object)
         return output
 
@@ -155,5 +155,5 @@ class ApiSession(ApiInterface):
         collection_class = rad_object.__class__
         collection = collection_class.RAD_COLLECTION
         new_rad_object = collection_class(rad_session=self, href=item.get(
-            'href'), payload=item.get(collection))
+            'href'), json=item.get(collection))
         return new_rad_object

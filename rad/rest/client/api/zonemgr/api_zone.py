@@ -20,7 +20,7 @@ from rad.rest.client.api.api_interface import ApiInterface
 class ApiZone(ApiInterface):
     RAD_COLLECTION = 'Zone'
 
-    def __init__(self, payload=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(RAD_NAMESPACE, ApiZone.RAD_COLLECTION, rad_api_version='1.0', *args, **kwargs)
         self.id = None
         self.name = None
@@ -28,11 +28,8 @@ class ApiZone(ApiInterface):
         self.uuid = None
         self.auxstate = None
         self.state = None
-        if payload is not None:
-            self.load(payload)
 
     def load(self, payload):
-        self.json = payload
         self.id = payload.get('id')
         self.name = payload.get('name')
         self.brand = payload.get('brand')

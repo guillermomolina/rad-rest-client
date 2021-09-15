@@ -15,37 +15,11 @@
 
 import argparse
 import logging
-from typing import OrderedDict
-from rad.rest.client.util.print import print_table
+from rad.rest.client.util import print_table, order_dict_with_keys
 from rad.rest.client.api.authentication import ApiSession
 from rad.rest.client.api.zonemgr import ApiZone
 
 LOG = logging.getLogger(__name__)
-
-
-def filter_dict(dict_object, callback):
-    new_dict = dict()
-    # Iterate over all the items in dictionary
-    for (key, value) in dict_object.items():
-        # Check if item satisfies the given condition then add to new dict
-        if callback((key, value)):
-            new_dict[key] = value
-    return new_dict
-
-
-def order_dict_with_keys(dict_object, key_list):
-    new_dict = OrderedDict()
-    for key in key_list:
-        new_dict[key] = dict_object[key]
-    return new_dict
-
-
-def list_insert_sorted_by_key(list, dict_object, key):
-    for index, value in enumerate(list):
-        if value.get(key) > dict_object.get(key):
-            list.insert(index, dict_object)
-            return
-    list.append(dict_object)
 
 
 class CmdZoneList:
@@ -69,7 +43,6 @@ class CmdZoneList:
         parser.add_argument('-s', '--sort-by',
                             choices=['id', 'name', 'brand',
                                      'state', 'auxstate', 'uuid'],
-                            default='id',
                             help='Specify the sort order in the table')
 
     def __init__(self, options):
@@ -79,7 +52,8 @@ class CmdZoneList:
             zones = [zone.json for zone in zone_instances]
 
             # sort by key
-            zones = sorted(zones, key=lambda i: i[options.sort_by])
+            if options.sort_by is not None:
+                zones = sorted(zones, key=lambda i: i[options.sort_by])
 
             # filter columns
             zones = [order_dict_with_keys(zone, options.columns)

@@ -21,7 +21,7 @@ LOG = logging.getLogger(__name__)
 
 
 class ApiInterface(object):
-    def __init__(self, rad_namespace, rad_collection, rad_api_version=None, href=None, rad_session=None):
+    def __init__(self, rad_namespace, rad_collection, rad_api_version=None, href=None, rad_session=None, json=None):
         self.rad_namespace = rad_namespace
         self.rad_collection = rad_collection
         self.rad_api_version = rad_api_version
@@ -29,7 +29,9 @@ class ApiInterface(object):
         self.rad_instance_id = None
         if href is not None:
             self.href = href
-        self.json = None
+        self.json = json
+        if json is not None:
+            self.load()
 
     @property
     def href(self):
@@ -59,6 +61,9 @@ class ApiInterface(object):
             self.rad_instance_id = '/'.join(parts[4:])
         else:
             self.rad_instance_id = None
+
+    def load(self):
+        pass
 
     def request(self, method, path=None, **kwargs):
         if path is None:

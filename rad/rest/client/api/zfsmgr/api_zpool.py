@@ -19,11 +19,6 @@ from rad.rest.client.api.api_interface import ApiInterface
 class ApiZpool(ApiInterface):
     RAD_COLLECTION = 'Zpool'
 
-    def __init__(self, payload=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(RAD_NAMESPACE, ApiZpool.RAD_COLLECTION,
                          rad_api_version='1.0', *args, **kwargs)
-        if payload is not None:
-            self.load(payload)
-
-    def load(self, payload):
-        self.json = payload

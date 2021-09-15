@@ -12,7 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-RAD_NAMESPACE = 'com.oracle.solaris.rad.zfsmgr'
-
-from .api_zfs_dataset import ApiZfsDataset
-from .api_zpool import ApiZpool
+from .cmd_zpool import CmdZpool

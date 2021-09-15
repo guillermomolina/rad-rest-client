@@ -19,14 +19,9 @@ from rad.rest.client.api.api_interface import ApiInterface
 class ApiZfsDataset(ApiInterface):
     RAD_COLLECTION = 'ZfsDataset'
 
-    def __init__(self, payload=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(RAD_NAMESPACE, ApiZfsDataset.RAD_COLLECTION,
                          rad_api_version='1.0', *args, **kwargs)
-        if payload is not None:
-            self.load(payload)
-
-    def load(self, payload):
-        self.json = payload
 
     def get_filesystems(self, recursive=False):
         json_body = {"recursive": recursive}
