@@ -15,8 +15,11 @@
 
 import argparse
 import logging
-from urllib.parse import unquote
-from rad.rest.client.util import print_table, order_dict_with_keys, format_bytes
+import json
+import yaml
+
+from rad.rest.client.rad_types import RADValueDumper, RADValueJSONEncoder
+from rad.rest.client.util import print_table, order_dict_with_keys, print_parsable
 from rad.rest.client.api.authentication import Session
 from rad.rest.client.api.zfsmgr import Zpool
 
@@ -37,14 +40,27 @@ class CmdZpoolList:
                                                  help='List zpools')
         parser.add_argument('-c', '--columns',
                             nargs='+',
-                            choices=['name', 'size', 'allocated', 'free',
-                                     'capacity', 'dedupratio', 'health', 'altroot'],
+                            choices=Zpool.PROPERTIES.keys(),
                             default=['name', 'size', 'allocated', 'free',
                                      'capacity', 'dedupratio', 'health', 'altroot'],
                             help='Specify wich columns to show in the table')
         parser.add_argument('-s', '--sort-by',
-                            choices=['name'],
+                            choices=Zpool.PROPERTIES.keys(),
+                            default='name',
                             help='Specify the sort order in the table')
+        group = parser.add_mutually_exclusive_group()
+        group.add_argument('-t', '--table',
+                            action='store_true',
+                            default=True,
+                            help='Show output in table format')
+        group.add_argument('-y', '--yaml',
+                            action='store_true',
+                            help='Show output in yaml format')
+        group.add_argument('-j', '--json',
+                            action='store_true',
+                            help='Show output in json format')
+        group.add_argument('-d', '--delimiter',
+                            help='Show output in a parsable format delimited by the string')
 
     def __init__(self, options):
         with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
@@ -52,24 +68,21 @@ class CmdZpoolList:
 
             zpools = []
             for zpool_instance in zpool_instances:
-                zpool = {}
-                property_instances = zpool_instance.get_props()
-                for property in property_instances.payload:
-                    property_name = property['name']
-                    property_value = property['value']
-                    if property_name in ['size', 'allocated', 'free']:
-                        property_value = format_bytes(int(property_value))
-                    if property_name == 'capacity':
-                        property_value = property_value + ' %'
-                    zpool[property_name] = property_value
-                zpools.append(zpool)
+                zpools.append(zpool_instance.get_properties())
 
             # sort by key
             if options.sort_by is not None:
-                zones = sorted(zpools, key=lambda i: i[options.sort_by])
+                zpools = sorted(zpools, key=lambda i: i[options.sort_by])
 
             # filter columns
             zpools = [order_dict_with_keys(zpool, options.columns)
-                      for zpool in zpools]
+                            for zpool in zpools]
 
-            print_table(zpools)
+            if options.json:
+                print(json.dumps(zpools, indent=4, cls=RADValueJSONEncoder))
+            elif options.yaml:
+                print(yaml.dump(zpools, Dumper=RADValueDumper))
+            elif options.delimiter is not None:
+                print_parsable(zpools, options.delimiter)
+            elif options.table:
+                print_table(zpools)

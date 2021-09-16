@@ -21,7 +21,7 @@ class Zone(RADInterface):
     RAD_COLLECTION = 'Zone'
 
     def __init__(self, *args, **kwargs):
-        super().__init__(RAD_NAMESPACE, Zone.RAD_COLLECTION, rad_api_version='1.0', *args, **kwargs)
+        super().__init__(RAD_NAMESPACE, Zone.RAD_COLLECTION, *args, **kwargs)
         self.id = None
         self.name = None
         self.brand = None

@@ -36,15 +36,11 @@ def modification_date(filename):
 class Session(RADInterface):
     RAD_COLLECTION = 'Session'
 
-    def __init__(self, hostname, protocol='https', port=6788, ssl_cert_verify=False, ssl_cert_path=None):
+    def __init__(self, hostname, protocol='https', port=6788):
         super().__init__(RAD_NAMESPACE, Session.RAD_COLLECTION, RAD_API_VERSION)
         self.protocol = protocol
         self.hostname = hostname
         self.port = port
-        self.verify = ssl_cert_verify
-        if ssl_cert_path is not None:
-            self.verify = ssl_cert_path
-
         self.session = None
         self.max_session_time = 0
         filename = '~/.cache/rad/{}_{}_{}.dat'.format(
@@ -53,7 +49,6 @@ class Session(RADInterface):
 
     def __enter__(self):
         self.load_session()
-        # self.login()
         return self
 
     def __exit__(self, exc_type, exc_value, tb):
@@ -86,9 +81,8 @@ class Session(RADInterface):
                               % last_modification)
         if not was_read_from_cache:
             self.session = requests.Session()
-            self.session.verify = self.verify
+            self.rad_instance_id = None
             LOG.debug('Created new session')
-            self.save_session()
 
     def save_session(self):
         parent = self.session_filename.parent
@@ -109,7 +103,14 @@ class Session(RADInterface):
         res = self.session.request(method, url, **kwargs)
         return RADResponse(res)
 
-    def login(self, username, password):
+    def login(self, username, password, ssl_cert_verify=False, ssl_cert_path=None):
+        self.load_session(force=True)
+
+        verify = ssl_cert_verify
+        if ssl_cert_path is not None:
+            verify = ssl_cert_path
+        self.session.verify = verify
+
         config_json = {
             "username": username,
             "password": password,

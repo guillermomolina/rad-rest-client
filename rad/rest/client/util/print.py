@@ -16,26 +16,32 @@
 # TODO: use from prettytable import PrettyTable ?
 
 
-def print_table(table, truncate=True, separation=2, identation=0):
+from rad.rest.client.rad_types import RADValue
+
+
+def print_table(data, truncate=True, separation=2, identation=0):
     MAX_COLUMN_LENGTH = 50
-    if len(table) == 0:
+    if len(data) == 0:
         return
 
     columns = []
     # initialize columns from first row's keys
-    for key in table[0]:
+    for key in data[0]:
         columns.append({
             'key': key,
             'tittle': key.upper(),
             'length': len(key)
         })
 
+    table = []
     # adjust columns lenghts to max record sizes
-    for column in columns:
-        for row in table:
-            value = str(row[column['key']]).replace('\t', ' ')
+    for data_row in data:
+        row = {}
+        for column in columns:
+            value = str(data_row[column['key']]).replace('\t', ' ')
             row[column['key']] = value
             column['length'] = max(column['length'], len(value))
+        table.append(row)
 
     if truncate:
         for column in columns:
@@ -46,32 +52,33 @@ def print_table(table, truncate=True, separation=2, identation=0):
     # print headers
     strings = [''] * identation if identation > 0 else []
     for column in columns:
-        str_format = '{:%s}' % str(column['length'])
+        data_value = data[0][column['key']]
+        if isinstance(data_value, RADValue) and data_value.__class__.RIGHT_ALIGNED:
+            str_format = '{:>%s}' % str(column['length'])
+        else:
+            str_format = '{:%s}' % str(column['length'])
         strings.append(str_format.format(column['tittle']))
     print(separation_string.join(strings))
 
-    for row in table:
+    for i, row in enumerate(table):
+        data_row = data[i]
         strings = [''] * identation if identation > 0 else []
         for column in columns:
             value = row[column['key']]
+            data_value = data_row[column['key']]
             if truncate and len(value) > MAX_COLUMN_LENGTH:
                 value = value[:MAX_COLUMN_LENGTH-3] + '...'
-            str_format = '{:%s}' % str(column['length'])
+            if isinstance(data_value, RADValue) and data_value.__class__.RIGHT_ALIGNED:
+                str_format = '{:>%s}' % str(column['length'])
+            else:
+                str_format = '{:%s}' % str(column['length'])
             strings.append(str_format.format(value))
         print(separation_string.join(strings))
 
+def print_parsable(data, delimiter='|'):
+    if len(data) == 0:
+        return
 
-def format_bytes(size):
-    # 2**10 = 1024
-    power = 2**10
-    n = 0
-    power_labels = {0: 'B', 1: 'KB', 2: 'MB', 3: 'GB', 4: 'TB', 5: 'PB'}
-    while size > power:
-        size /= power
-        n += 1
-    return '{:.2f} {:s}'.format(size, power_labels[n])
-
-
-def print_info(data):
-    for key, value in data.items():
-        print('%s: %s' % (key, value))
+    print(delimiter.join([key.upper() for key in data[0]]))
+    for item in data:
+        print(delimiter.join([str(value) for value in item.values()]))

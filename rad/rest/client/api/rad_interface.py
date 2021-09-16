@@ -24,7 +24,7 @@ class RADInterface(object):
     def __init__(self, rad_namespace, rad_collection, rad_api_version=None, href=None, rad_session=None, json=None):
         self.rad_namespace = rad_namespace
         self.rad_collection = rad_collection
-        self.rad_api_version = rad_api_version
+        self.rad_api_version = rad_api_version or '1.0'
         self.rad_session = rad_session
         self.rad_instance_id = None
         if href is not None:

@@ -26,8 +26,7 @@ class ZoneManager(RADInterface):
     RAD_COLLECTION = 'ZoneManager'
 
     def __init__(self, *args, **kwargs):
-        super().__init__(RAD_NAMESPACE, ZoneManager.RAD_COLLECTION,
-                         rad_api_version='1.0', *args, **kwargs)
+        super().__init__(RAD_NAMESPACE, ZoneManager.RAD_COLLECTION, *args, **kwargs)
         self.evacuationState = None
 
     def load(self):
