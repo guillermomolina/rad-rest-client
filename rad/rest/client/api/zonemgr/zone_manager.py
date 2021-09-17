@@ -43,7 +43,7 @@ class ZoneManager(RADInterface):
 
         return self.rad_method('create', json_body)
 
-    def rad_method_import_config(self, noexecute, name, configuration):
+    def rad_method_importConfig(self, noexecute, name, configuration):
         json_body = {
             'noexecute': noexecute,
             'name': name,

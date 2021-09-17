@@ -25,7 +25,7 @@ LOG = logging.getLogger(__name__)
 
 class CmdZoneGetProperties:
     name = 'get-properties'
-    aliases = ['get']
+    aliases = ['get-resources', 'get']
 
     @staticmethod
     def init_parser(subparsers, parent_parser):
@@ -35,16 +35,6 @@ class CmdZoneGetProperties:
                                        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                        description='Get properties of a zone',
                                        help='Get properties of a zone')
-        parser.add_argument('-c', '--columns',
-                            nargs='+',
-                            choices=['id', 'name', 'brand',
-                                     'state', 'auxstate', 'uuid'],
-                            default=['id', 'name', 'brand', 'state'],
-                            help='Specify wich columns to show in the table')
-        parser.add_argument('-s', '--sort-by',
-                            choices=['id', 'name', 'brand',
-                                     'state', 'auxstate', 'uuid'],
-                            help='Specify the sort order in the table')
         parser.add_argument('zonename',
                             help='Name of the zone')
 
@@ -59,6 +49,11 @@ class CmdZoneGetProperties:
                 return
             zone = zones[0]
 
-            zone_properties = zone.get_properties(options.columns)
-
-            print(zone_properties)
+            resources = zone.get_resources()
+            for resource in resources:
+                for property in resource.properties:
+                    type = ''
+                    if resource.type != 'global':
+                        type = '[%s]\t' % resource.type
+                    if property.value != '':
+                        print('%s%s: %s' % (type, property.name, property.value))

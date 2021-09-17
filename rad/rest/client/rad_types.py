@@ -99,19 +99,6 @@ class RADByte(RADSize):
         return string + 'B'
 
 
-class RADProperty:
-    def __init__(self, name, rad_type, detail=None):
-        self.name = name
-        self.rad_type = rad_type
-        self.detail = detail
-
-    def get_definition(self):
-        definition = {'name': self.name}
-        if issubclass(self.rad_type, RADInteger):
-            definition['integer_val'] = True
-        return definition
-
-
 class RADValueJSONEncoder(JSONEncoder):
     def default(self, o):
         return str(o)

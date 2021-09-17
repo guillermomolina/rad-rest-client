@@ -12,20 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from rad.rest.client.rad_types import RADByte, RADPath, RADProperty
+from rad.rest.client.rad_types import RADByte, RADPath
 from rad.rest.client.exceptions import RADException
-from rad.rest.client.api.zfsmgr import RAD_NAMESPACE
+from rad.rest.client.api.zfsmgr import RAD_NAMESPACE, Property
 from rad.rest.client.api.rad_interface import RADInterface
 
 
 class ZfsDataset(RADInterface):
     RAD_COLLECTION = 'ZfsDataset'
     PROPERTIES = [
-        RADProperty('name', RADPath),
-        RADProperty('used', RADByte),
-        RADProperty('available', RADByte),
-        RADProperty('referenced', RADByte),
-        RADProperty('mountpoint', RADPath)
+        Property('name', RADPath),
+        Property('used', RADByte),
+        Property('available', RADByte),
+        Property('referenced', RADByte),
+        Property('mountpoint', RADPath)
     ]
 
     @classmethod

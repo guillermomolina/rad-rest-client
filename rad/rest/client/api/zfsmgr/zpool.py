@@ -13,38 +13,38 @@
 # limitations under the License.
 
 from rad.rest.client.exceptions import RADException
-from rad.rest.client.rad_types import RADByte, RADPath, RADProperty, RADString, RADBoolean
-from rad.rest.client.api.zfsmgr import RAD_NAMESPACE
+from rad.rest.client.rad_types import RADByte, RADPath, RADString, RADBoolean
 from rad.rest.client.api.rad_interface import RADInterface
+from rad.rest.client.api.zfsmgr import RAD_NAMESPACE, Property
 
 
 class Zpool(RADInterface):
     RAD_COLLECTION = 'Zpool'
     PROPERTIES = [
-        RADProperty('name', RADString),
+        Property('name', RADString),
 
-        RADProperty('allocated', RADByte),
-        RADProperty('altroot', RADString),
-        RADProperty('autoexpand', RADBoolean),
-        RADProperty('autoreplace', RADBoolean),
-        RADProperty('bootfs', RADPath),
-        RADProperty('cachefile', RADPath),
-        RADProperty('capacity', RADByte),
-        RADProperty('clustered', RADBoolean),
-        RADProperty('dedupditto', RADString),
-        RADProperty('dedupratio', RADString),
-        RADProperty('delegation', RADBoolean),
-        RADProperty('failmode', RADString),
-        RADProperty('free', RADByte),
-        RADProperty('guid', RADString),
-        RADProperty('health', RADString),
-        RADProperty('lastscrub', RADString),
-        RADProperty('listshares', RADBoolean),
-        RADProperty('listsnapshots', RADBoolean),
-        RADProperty('readonly', RADBoolean),
-        RADProperty('scrubinterval', RADString),
-        RADProperty('size', RADByte),
-        RADProperty('version', RADString)
+        Property('allocated', RADByte),
+        Property('altroot', RADString),
+        Property('autoexpand', RADBoolean),
+        Property('autoreplace', RADBoolean),
+        Property('bootfs', RADPath),
+        Property('cachefile', RADPath),
+        Property('capacity', RADByte),
+        Property('clustered', RADBoolean),
+        Property('dedupditto', RADString),
+        Property('dedupratio', RADString),
+        Property('delegation', RADBoolean),
+        Property('failmode', RADString),
+        Property('free', RADByte),
+        Property('guid', RADString),
+        Property('health', RADString),
+        Property('lastscrub', RADString),
+        Property('listshares', RADBoolean),
+        Property('listsnapshots', RADBoolean),
+        Property('readonly', RADBoolean),
+        Property('scrubinterval', RADString),
+        Property('size', RADByte),
+        Property('version', RADString)
     ]
 
     @classmethod

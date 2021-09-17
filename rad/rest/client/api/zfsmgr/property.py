@@ -12,8 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-RAD_NAMESPACE = 'com.oracle.solaris.rad.zfsmgr'
 
-from .property import Property
-from .zfs_dataset import ZfsDataset
-from .zpool import Zpool
+
+from rad.rest.client.rad_types import RADInteger
+
+
+class Property:
+    def __init__(self, name, rad_type, detail=None):
+        self.name = name
+        self.rad_type = rad_type
+        self.detail = detail
+
+    def get_definition(self):
+        definition = {'name': self.name}
+        if issubclass(self.rad_type, RADInteger):
+            definition['integer_val'] = True
+        return definition

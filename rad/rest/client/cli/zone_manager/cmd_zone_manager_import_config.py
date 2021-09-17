@@ -52,7 +52,7 @@ class CmdZoneManagerImportConfig:
                 if options.file is not None:
                     with open(options.file, "r") as f:
                         configuration = f.read()
-                zone_manager.rad_method_import_config(options.no_execute, options.zonename, configuration)
+                zone_manager.rad_method_importConfig(options.no_execute, options.zonename, configuration)
         except (OSError, IOError) as e:
             LOG.error(str(e))
 
