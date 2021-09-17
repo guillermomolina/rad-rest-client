@@ -12,21 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from rad.rest.client.rad_types import RADByte, RADInteger, RADPath, RADProperty
-from rad.rest.client.exceptions import RADError, RADException
+from rad.rest.client.rad_types import RADByte, RADPath, RADProperty
+from rad.rest.client.exceptions import RADException
 from rad.rest.client.api.zfsmgr import RAD_NAMESPACE
 from rad.rest.client.api.rad_interface import RADInterface
 
 
 class ZfsDataset(RADInterface):
     RAD_COLLECTION = 'ZfsDataset'
-    PROPERTIES = {
-        'name': RADProperty('name', RADPath),
-        'used': RADProperty('used', RADByte),
-        'available': RADProperty('available', RADByte),
-        'referenced': RADProperty('referenced', RADByte),
-        'mountpoint': RADProperty('mountpoint', RADPath),
-    }
+    PROPERTIES = [
+        RADProperty('name', RADPath),
+        RADProperty('used', RADByte),
+        RADProperty('available', RADByte),
+        RADProperty('referenced', RADByte),
+        RADProperty('mountpoint', RADPath)
+    ]
+
+    @classmethod
+    def property_names(cls):
+        return [property.name for property in cls.PROPERTIES]
 
     def __init__(self, *args, **kwargs):
         super().__init__(RAD_NAMESPACE, ZfsDataset.RAD_COLLECTION, *args, **kwargs)
@@ -36,80 +40,12 @@ class ZfsDataset(RADInterface):
 
         return self.rad_method('get_filesystems', json_body)
 
-    def get_props2(self):
-        json_body = {"props": [
-            # zfs help -l properties
-            {"name": "name"},
-            {"name": "available", "integer_val": True},
-            {"name": "compressratio"},
-            {"name": "creation", "integer_val": True},
-            {"name": "defer_destroy"},
-            {"name": "keychangedate"},
-            {"name": "keystatus"},
-            {"name": "mounted"},
-            {"name": "origin"},
-            {"name": "referenced", "integer_val": True},
-            {"name": "rekeydate"},
-            {"name": "type"},
-            {"name": "used", "integer_val": True},
-            {"name": "usedbydata", "integer_val": True},
-            {"name": "usedbychildren", "integer_val": True},
-            {"name": "usedbydataset", "integer_val": True},
-            {"name": "usedbyrefreservation", "integer_val": True},
-            {"name": "usedbysnapshots", "integer_val": True},
-            {"name": "userrefs", "integer_val": True},
-            {"name": "volblocksize"},
-            {"name": "aclmode"},
-            {"name": "refreservation"},
-            {"name": "aclinherit"},
-            {"name": "atime"},
-            {"name": "canmount"},
-            {"name": "checksum"},
-            {"name": "compression"},
-            {"name": "copies"},
-            {"name": "dedup"},
-            {"name": "devices"},
-            {"name": "exec"},
-            {"name": "logbias"},
-            {"name": "mlslabel"},
-            {"name": "mountpoint"},
-            {"name": "nbmand"},
-            {"name": "primarycache"},
-            {"name": "quota", "integer_val": True},
-            {"name": "sync"},
-            {"name": "defaultuserquota", "integer_val": True},
-            {"name": "defaultgroupquota", "integer_val": True},
-            {"name": "readonly"},
-            {"name": "recordsize"},
-            {"name": "refquota", "integer_val": True},
-            {"name": "refreservation", "integer_val": True},
-            {"name": "reservation", "integer_val": True},
-            {"name": "rstchown"},
-            {"name": "secondarycache"},
-            {"name": "setuid"},
-            {"name": "shadow"},
-            {"name": "sharenfs"},
-            {"name": "sharesmb"},
-            {"name": "snapdir"},
-            {"name": "version"},
-            {"name": "volsize", "integer_val": True},
-            {"name": "vscan"},
-            {"name": "xattr"},
-            {"name": "zoned"},
-            {"name": "casesensitivity"},
-            {"name": "normalization"},
-            {"name": "utf8only"},
-            {"name": "encryption"},
-            {"name": "multilevel"},
-            {"name": "keysource"}
-        ]}
+    def get_props(self, property_names=None):
+        if property_names is None:
+            property_names = ZfsDataset.property_names()
 
-        return self.rad_method('get_props', json_body)
-
-    def get_props(self, property_names=['name', 'used', 'available',
-                                        'referenced', 'mountpoint']):
         props = [property.get_definition()
-                 for property in ZfsDataset.PROPERTIES.values() if property.name in property_names]
+                 for property in ZfsDataset.PROPERTIES if property.name in property_names]
         json_body = {"props": props}
         return self.rad_method('get_props', json_body)
 
@@ -123,7 +59,10 @@ class ZfsDataset(RADInterface):
             if property_instance['error'] is not None:
                 raise RADException(
                     property_instance['error'].get('libzfs_errstr'))
-            rad_type = ZfsDataset.PROPERTIES[property_instance['name']].rad_type
-            properties[property_instance['name']] = rad_type(
+            rad_types = [
+                rad_property.rad_type for rad_property in ZfsDataset.PROPERTIES if rad_property.name == property_instance['name']]
+            if len(rad_types) != 1:
+                raise RADException('len(rad_types) != 1')
+            properties[property_instance['name']] = rad_types[0](
                 property_instance['value'])
         return properties

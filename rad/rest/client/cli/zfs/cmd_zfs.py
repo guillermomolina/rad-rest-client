@@ -17,33 +17,32 @@ import argparse
 from rad.rest.client.cli.zfs.cmd_zfs_get_filesystems import CmdZfsGetFilesystems
 from rad.rest.client.cli.zfs.cmd_zfs_list import CmdZfsList
 
+
 class CmdZfs:
     name = 'zfs'
     aliases = []
-
-    commands = {
-        CmdZfsGetFilesystems.name: CmdZfsGetFilesystems,
-        CmdZfsList.name: CmdZfsList
-    }
+    commands = [CmdZfsGetFilesystems, CmdZfsList]
 
     @staticmethod
     def init_parser(subparsers):
         parent_parser = argparse.ArgumentParser(add_help=False)
         parser = subparsers.add_parser(CmdZfs.name,
-            aliases=CmdZfs.aliases,
-            parents=[parent_parser],
-            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-            description='Manage ZFS datasets',
-            help='Manage ZFS datasets')
+                                       aliases=CmdZfs.aliases,
+                                       parents=[parent_parser],
+                                       formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                       description='Manage ZFS datasets',
+                                       help='Manage ZFS datasets')
 
         subparsers = parser.add_subparsers(
             dest='subcommand',
             metavar='COMMAND',
             required=True)
 
-        for subcommand in CmdZfs.commands.values():
+        for subcommand in CmdZfs.commands:
             subcommand.init_parser(subparsers, parent_parser)
 
     def __init__(self, options):
-        command = CmdZfs.commands[options.subcommand]
-        command(options)
+        for command in self.commands:
+            if options.subcommand == command.name or options.subcommand in command.aliases:
+                command(options)
+                break

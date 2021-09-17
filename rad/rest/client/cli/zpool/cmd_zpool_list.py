@@ -40,12 +40,12 @@ class CmdZpoolList:
                                                  help='List ZFS pools')
         parser.add_argument('-c', '--columns',
                             nargs='+',
-                            choices=Zpool.PROPERTIES.keys(),
+                            choices=Zpool.property_names(),
                             default=['name', 'size', 'allocated', 'free',
                                      'capacity', 'dedupratio', 'health', 'altroot'],
                             help='Specify wich columns to show in the table')
         parser.add_argument('-s', '--sort-by',
-                            choices=Zpool.PROPERTIES.keys(),
+                            choices=Zpool.property_names(),
                             default='name',
                             help='Specify the sort order in the table')
         group = parser.add_mutually_exclusive_group()

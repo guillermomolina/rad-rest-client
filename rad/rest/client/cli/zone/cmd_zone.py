@@ -15,33 +15,34 @@
 import argparse
 
 from rad.rest.client.cli.zone.cmd_zone_list import CmdZoneList
+from rad.rest.client.cli.zone.cmd_zone_get_properties import CmdZoneGetProperties
+
 
 class CmdZone:
     name = 'zone'
     aliases = []
-
-    commands = {
-        CmdZoneList.name: CmdZoneList
-    }
+    commands = [CmdZoneList, CmdZoneGetProperties]
 
     @staticmethod
     def init_parser(subparsers):
         parent_parser = argparse.ArgumentParser(add_help=False)
         parser = subparsers.add_parser(CmdZone.name,
-            aliases=CmdZone.aliases,
-            parents=[parent_parser],
-            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-            description='Manage zones',
-            help='Manage zones')
+                                       aliases=CmdZone.aliases,
+                                       parents=[parent_parser],
+                                       formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                       description='Manage zones',
+                                       help='Manage zones')
 
         subparsers = parser.add_subparsers(
             dest='subcommand',
             metavar='COMMAND',
             required=True)
 
-        for subcommand in CmdZone.commands.values():
+        for subcommand in CmdZone.commands:
             subcommand.init_parser(subparsers, parent_parser)
 
     def __init__(self, options):
-        command = CmdZone.commands[options.subcommand]
-        command(options)
+        for command in self.commands:
+            if options.subcommand == command.name or options.subcommand in command.aliases:
+                command(options)
+                break

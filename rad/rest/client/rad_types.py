@@ -37,6 +37,11 @@ class RADValue:
         return self.value < other.value
 
 
+class RADBoolean(RADValue):
+    def __init__(self, value):
+        super().__init__(value)
+
+
 class RADString(RADValue):
     def __init__(self, value):
         super().__init__(value)

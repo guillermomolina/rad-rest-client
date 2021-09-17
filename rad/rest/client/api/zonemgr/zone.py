@@ -22,18 +22,20 @@ class Zone(RADInterface):
 
     def __init__(self, *args, **kwargs):
         super().__init__(RAD_NAMESPACE, Zone.RAD_COLLECTION, *args, **kwargs)
-        self.id = None
-        self.name = None
-        self.brand = None
-        self.uuid = None
-        self.auxstate = None
-        self.state = None
 
-    def load(self):
-        self.id = self.json.get('id')
-        self.name = self.json.get('name')
-        self.brand = self.json.get('brand')
-        self.uuid = self.json.get('uuid')
-        self.auxstate = self.json.get('auxstate')
-        self.state = self.json.get('state')
+    def init(self):
+        if self.json is None:
+            self.id = None
+            self.name = None
+            self.brand = None
+            self.uuid = None
+            self.auxstate = None
+            self.state = None
+        else:
+            self.id = self.json.get('id')
+            self.name = self.json.get('name')
+            self.brand = self.json.get('brand')
+            self.uuid = self.json.get('uuid')
+            self.auxstate = self.json.get('auxstate')
+            self.state = self.json.get('state')
         

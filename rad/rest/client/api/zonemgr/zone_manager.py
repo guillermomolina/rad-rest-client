@@ -27,10 +27,12 @@ class ZoneManager(RADInterface):
 
     def __init__(self, *args, **kwargs):
         super().__init__(RAD_NAMESPACE, ZoneManager.RAD_COLLECTION, *args, **kwargs)
-        self.evacuationState = None
 
-    def load(self):
-        self.evacuationState = self.json.get('evacuationState')
+    def init(self):
+        if self.json is None:
+            self.evacuationState = None
+        else:
+            self.evacuationState = self.json.get('evacuationState')
 
     def create(self, name, path=None, template=None):
         json_body = {

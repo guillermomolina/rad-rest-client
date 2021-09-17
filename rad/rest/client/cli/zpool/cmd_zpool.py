@@ -19,10 +19,7 @@ from rad.rest.client.cli.zpool.cmd_zpool_list import CmdZpoolList
 class CmdZpool:
     name = 'zpool'
     aliases = []
-
-    commands = {
-        CmdZpoolList.name: CmdZpoolList
-    }
+    commands = [CmdZpoolList]
 
     @staticmethod
     def init_parser(subparsers):
@@ -39,9 +36,11 @@ class CmdZpool:
             metavar='COMMAND',
             required=True)
 
-        for subcommand in CmdZpool.commands.values():
+        for subcommand in CmdZpool.commands:
             subcommand.init_parser(subparsers, parent_parser)
 
     def __init__(self, options):
-        command = CmdZpool.commands[options.subcommand]
-        command(options)
+        for command in self.commands:
+            if options.subcommand == command.name or options.subcommand in command.aliases:
+                command(options)
+                break

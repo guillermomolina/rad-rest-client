@@ -30,8 +30,7 @@ class RADInterface(object):
         if href is not None:
             self.href = href
         self.json = json
-        if json is not None:
-            self.load()
+        self.init()
 
     @property
     def href(self):
@@ -62,7 +61,7 @@ class RADInterface(object):
         else:
             self.rad_instance_id = None
 
-    def load(self):
+    def init(self):
         pass
 
     def request(self, method, path=None, **kwargs):

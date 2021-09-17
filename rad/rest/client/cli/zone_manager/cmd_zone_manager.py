@@ -18,34 +18,33 @@ from rad.rest.client.cli.zone_manager.cmd_zone_manager_create import CmdZoneMana
 from rad.rest.client.cli.zone_manager.cmd_zone_manager_import_config import CmdZoneManagerImportConfig
 from rad.rest.client.cli.zone_manager.cmd_zone_manager_delete import CmdZoneManagerDelete
 
+
 class CmdZoneManager:
     name = 'zone-manager'
     aliases = []
-
-    commands = {
-        CmdZoneManagerCreate.name: CmdZoneManagerCreate,
-        CmdZoneManagerDelete.name: CmdZoneManagerDelete,
-        CmdZoneManagerImportConfig.name: CmdZoneManagerImportConfig
-    }
+    commands = [CmdZoneManagerCreate,
+                CmdZoneManagerDelete, CmdZoneManagerImportConfig]
 
     @staticmethod
     def init_parser(subparsers):
         parent_parser = argparse.ArgumentParser(add_help=False)
         parser = subparsers.add_parser(CmdZoneManager.name,
-            aliases=CmdZoneManager.aliases,
-            parents=[parent_parser],
-            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-            description='Configure zones',
-            help='Configure zones')
+                                       aliases=CmdZoneManager.aliases,
+                                       parents=[parent_parser],
+                                       formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                       description='Configure zones',
+                                       help='Configure zones')
 
         subparsers = parser.add_subparsers(
             dest='subcommand',
             metavar='COMMAND',
             required=True)
 
-        for subcommand in CmdZoneManager.commands.values():
+        for subcommand in CmdZoneManager.commands:
             subcommand.init_parser(subparsers, parent_parser)
 
     def __init__(self, options):
-        command = CmdZoneManager.commands[options.subcommand]
-        command(options)
+        for command in self.commands:
+            if options.subcommand == command.name or options.subcommand in command.aliases:
+                command(options)
+                break

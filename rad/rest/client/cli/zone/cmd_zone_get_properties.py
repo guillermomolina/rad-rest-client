@@ -22,18 +22,18 @@ from rad.rest.client.api.zonemgr import Zone
 LOG = logging.getLogger(__name__)
 
 
-class CmdZoneList:
-    name = 'list'
-    aliases = ['ls']
+class CmdZoneGetProperties:
+    name = 'get-properties'
+    aliases = ['get']
 
     @staticmethod
     def init_parser(subparsers, parent_parser):
-        parser = subparsers.add_parser(CmdZoneList.name,
-                                       aliases=CmdZoneList.aliases,
+        parser = subparsers.add_parser(CmdZoneGetProperties.name,
+                                       aliases=CmdZoneGetProperties.aliases,
                                        parents=[parent_parser],
                                        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-                                       description='List zones',
-                                       help='List zones')
+                                       description='Get properties of a zone',
+                                       help='Get properties of a zone')
         parser.add_argument('-c', '--columns',
                             nargs='+',
                             choices=['id', 'name', 'brand',
@@ -45,16 +45,15 @@ class CmdZoneList:
                                      'state', 'auxstate', 'uuid'],
                             help='Specify the sort order in the table')
         parser.add_argument('zonename',
-                            nargs='*',
-                            help='Name of the zones or all if none')
+                            nargs='+',
+                            help='Name of the zone')
 
     def __init__(self, options):
         with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
             zone_instances = session.list_objects(Zone())
 
             # get dictionaries
-            zones = [
-                zone.json for zone in zone_instances if len(options.zonename)== 0 or zone.name in options.zonename]
+            zones = [zone.json for zone in zone_instances if zone.name in options.zonename]
 
             # sort by key
             if options.sort_by is not None:

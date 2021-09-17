@@ -40,12 +40,12 @@ class CmdZfsList:
                                                  help='List zfs datasets')
         parser.add_argument('-c', '--columns',
                             nargs='+',
-                            choices=ZfsDataset.PROPERTIES.keys(),
+                            choices=ZfsDataset.property_names(),
                             default=['name', 'used', 'available',
                                      'referenced', 'mountpoint'],
                             help='Specify wich columns to show in the table')
         parser.add_argument('-s', '--sort-by',
-                            choices=ZfsDataset.PROPERTIES.keys(),
+                            choices=ZfsDataset.property_names(),
                             default='name',
                             help='Specify the sort order in the table')
         group = parser.add_mutually_exclusive_group()
