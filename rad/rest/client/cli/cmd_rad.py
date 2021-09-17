@@ -17,7 +17,7 @@ import argparse
 import logging
 
 from rad.rest.client import __version__, RADException
-from rad.rest.client.cli.session import CmdSession
+from rad.rest.client.cli.cmd_rad_login import CmdLogin
 from rad.rest.client.cli.zone import CmdZone
 from rad.rest.client.cli.zone_manager import CmdZoneManager
 from rad.rest.client.cli.zpool import CmdZpool
@@ -46,7 +46,7 @@ class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
 
 
 class CmdRAD:
-    commands = [CmdSession, CmdZone, CmdZoneManager, CmdZfs, CmdZpool]
+    commands = [CmdLogin, CmdZone, CmdZoneManager, CmdZfs, CmdZpool]
 
     def __init__(self):
         parser = argparse.ArgumentParser(

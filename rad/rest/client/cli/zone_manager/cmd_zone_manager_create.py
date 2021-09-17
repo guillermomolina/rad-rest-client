@@ -26,8 +26,8 @@ class CmdZoneManagerCreate:
     aliases = []
 
     @staticmethod
-    def init_parser(container_subparsers, parent_parser):
-        parser = container_subparsers.add_parser(CmdZoneManagerCreate.name,
+    def init_parser(subparsers, parent_parser):
+        parser = subparsers.add_parser(CmdZoneManagerCreate.name,
                                                  aliases=CmdZoneManagerCreate.aliases,
                                                  parents=[parent_parser],
                                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter,

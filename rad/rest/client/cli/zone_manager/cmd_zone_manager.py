@@ -29,14 +29,14 @@ class CmdZoneManager:
     }
 
     @staticmethod
-    def init_parser(oci_subparsers):
+    def init_parser(subparsers):
         parent_parser = argparse.ArgumentParser(add_help=False)
-        parser = oci_subparsers.add_parser(CmdZoneManager.name,
+        parser = subparsers.add_parser(CmdZoneManager.name,
             aliases=CmdZoneManager.aliases,
             parents=[parent_parser],
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-            description='Manage zones',
-            help='Manage zones')
+            description='Configure zones',
+            help='Configure zones')
 
         subparsers = parser.add_subparsers(
             dest='subcommand',

@@ -31,13 +31,13 @@ class CmdZpoolList:
     aliases = ['ls']
 
     @staticmethod
-    def init_parser(container_subparsers, parent_parser):
-        parser = container_subparsers.add_parser(CmdZpoolList.name,
+    def init_parser(subparsers, parent_parser):
+        parser = subparsers.add_parser(CmdZpoolList.name,
                                                  aliases=CmdZpoolList.aliases,
                                                  parents=[parent_parser],
                                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-                                                 description='List zpools',
-                                                 help='List zpools')
+                                                 description='List ZFS pools',
+                                                 help='List ZFS pools')
         parser.add_argument('-c', '--columns',
                             nargs='+',
                             choices=Zpool.PROPERTIES.keys(),
@@ -68,15 +68,15 @@ class CmdZpoolList:
 
             zpools = []
             for zpool_instance in zpool_instances:
-                zpools.append(zpool_instance.get_properties())
+                zpools.append(zpool_instance.get_properties(options.columns))
 
             # sort by key
             if options.sort_by is not None:
                 zpools = sorted(zpools, key=lambda i: i[options.sort_by])
 
             # filter columns
-            zpools = [order_dict_with_keys(zpool, options.columns)
-                            for zpool in zpools]
+            # zpools = [order_dict_with_keys(zpool, options.columns)
+            #                 for zpool in zpools]
 
             if options.json:
                 print(json.dumps(zpools, indent=4, cls=RADValueJSONEncoder))

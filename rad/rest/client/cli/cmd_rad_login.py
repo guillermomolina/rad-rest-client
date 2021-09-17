@@ -34,21 +34,19 @@ class Password:
         return self.value
 
 
-class CmdSessionLogin:
+class CmdLogin:
     name = 'login'
     aliases = []
 
     @staticmethod
-    def init_parser(container_subparsers, parent_parser):
-        parser = container_subparsers.add_parser(CmdSessionLogin.name,
-                                                 aliases=CmdSessionLogin.aliases,
+    def init_parser(subparsers):
+        parent_parser = argparse.ArgumentParser(add_help=False)
+        parser = subparsers.add_parser(CmdLogin.name,
+                                                 aliases=CmdLogin.aliases,
                                                  parents=[parent_parser],
                                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                                  description='Login to RAD REST server',
                                                  help='Login to RAD REST server')
-        parser.add_argument('-u', '--username',
-                            required=True,
-                            help='Login username')
         parser.add_argument('-p', '--password',
                             type=Password,
                             default=Password.DEFAULT,
@@ -58,6 +56,8 @@ class CmdSessionLogin:
                             help='Verify SSL certificate')
         parser.add_argument('--ssl-cert-path',
                             help='Path for CA SSL certificate')
+        parser.add_argument('username',
+                            help='Login username')
 
     def __init__(self, options):
         verify = options.ssl_cert_verify

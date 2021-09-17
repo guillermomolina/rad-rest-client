@@ -90,11 +90,10 @@ class Zpool(RADInterface):
 
         return self.rad_method('get_props', json_body)
 
-    def get_props(self, property_names=None):
-        if property_names is not None:
-            raise RADError('NYI')
+    def get_props(self, property_names=['name', 'size', 'allocated', 'free',
+                                     'capacity', 'dedupratio', 'health', 'altroot']):
         props = [property.get_definition()
-                 for property in Zpool.PROPERTIES.values()]
+                 for property in Zpool.PROPERTIES.values() if property.name in property_names]
         json_body = {"props": props}
         return self.rad_method('get_props', json_body)
 

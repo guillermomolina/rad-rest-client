@@ -31,8 +31,8 @@ class CmdZfsList:
     aliases = ['ls']
 
     @staticmethod
-    def init_parser(container_subparsers, parent_parser):
-        parser = container_subparsers.add_parser(CmdZfsList.name,
+    def init_parser(subparsers, parent_parser):
+        parser = subparsers.add_parser(CmdZfsList.name,
                                                  aliases=CmdZfsList.aliases,
                                                  parents=[parent_parser],
                                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -50,17 +50,17 @@ class CmdZfsList:
                             help='Specify the sort order in the table')
         group = parser.add_mutually_exclusive_group()
         group.add_argument('-t', '--table',
-                            action='store_true',
-                            default=True,
-                            help='Show output in table format')
+                           action='store_true',
+                           default=True,
+                           help='Show output in table format')
         group.add_argument('-y', '--yaml',
-                            action='store_true',
-                            help='Show output in yaml format')
+                           action='store_true',
+                           help='Show output in yaml format')
         group.add_argument('-j', '--json',
-                            action='store_true',
-                            help='Show output in json format')
+                           action='store_true',
+                           help='Show output in json format')
         group.add_argument('-d', '--delimiter',
-                            help='Show output in a parsable format delimited by the string')
+                           help='Show output in a parsable format delimited by the string')
 
     def __init__(self, options):
         with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
@@ -68,15 +68,17 @@ class CmdZfsList:
 
             zfs_datasets = []
             for zfs_dataset_instance in zfs_dataset_instances:
-                zfs_datasets.append(zfs_dataset_instance.get_properties())
+                zfs_datasets.append(
+                    zfs_dataset_instance.get_properties(options.columns))
 
             # sort by key
-            if options.sort_by is not None:
-                zfs_datasets = sorted(zfs_datasets, key=lambda i: i[options.sort_by])
+            if options.sort_by is not None and options.sort_by in options.columns:
+                zfs_datasets = sorted(
+                    zfs_datasets, key=lambda i: i[options.sort_by])
 
             # filter columns
-            zfs_datasets = [order_dict_with_keys(zfs_dataset, options.columns)
-                            for zfs_dataset in zfs_datasets]
+            # zfs_datasets = [order_dict_with_keys(zfs_dataset, options.columns)
+            #                 for zfs_dataset in zfs_datasets]
 
             if options.json:
                 print(json.dumps(zfs_datasets, indent=4, cls=RADValueJSONEncoder))

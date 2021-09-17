@@ -25,14 +25,14 @@ class CmdZpool:
     }
 
     @staticmethod
-    def init_parser(oci_subparsers):
+    def init_parser(subparsers):
         parent_parser = argparse.ArgumentParser(add_help=False)
-        parser = oci_subparsers.add_parser(CmdZpool.name,
+        parser = subparsers.add_parser(CmdZpool.name,
             aliases=CmdZpool.aliases,
             parents=[parent_parser],
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-            description='Manage zpools',
-            help='Manage zpools')
+            description='Manage ZFS pools',
+            help='Manage ZFS pools')
 
         subparsers = parser.add_subparsers(
             dest='subcommand',

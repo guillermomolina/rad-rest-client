@@ -45,16 +45,7 @@ class RADString(RADValue):
 @total_ordering
 class RADPath(RADString):
     def __init__(self, value):
-        if value is not None:
-            self.value = Path(value)
-        else:
-            self.value = None
-
-    def __eq__(self, other):
-        return str(self.value) == str(other.value)
-
-    def __lt__(self, other):
-        return str(self.value) < str(other.value)
+        super().__init__(value)
 
 
 class RadNumber(RADValue):
@@ -125,8 +116,8 @@ class RADValueDumper(SafeDumper):
     def represent_data(self, data):
         if isinstance(data, RADValue):
             return self.represent_data(str(data))
-        if isinstance(data, Path):
-            return super().represent_data(str(data))
+        # if isinstance(data, Path):
+        #     return super().represent_data(str(data))
         if isinstance(data, OrderedDict):
             return super().represent_data(dict(data))
         return super().represent_data(data)
