@@ -45,4 +45,4 @@ class CmdZoneManagerCreate:
     def __init__(self, options):
         with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
             zone_manager = session.get_object(ZoneManager())
-            zone_manager.create(options.zonename, options.path, options.template)
+            zone_manager.rad_method_create(options.zonename, options.path, options.template)

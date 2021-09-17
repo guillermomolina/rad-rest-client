@@ -15,6 +15,7 @@
 
 import argparse
 import logging
+from rad.rest.client.exceptions import RADException
 from rad.rest.client.util import print_table, order_dict_with_keys
 from rad.rest.client.api.authentication import Session
 from rad.rest.client.api.zonemgr import Zone
@@ -45,21 +46,19 @@ class CmdZoneGetProperties:
                                      'state', 'auxstate', 'uuid'],
                             help='Specify the sort order in the table')
         parser.add_argument('zonename',
-                            nargs='+',
                             help='Name of the zone')
 
     def __init__(self, options):
         with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
             zone_instances = session.list_objects(Zone())
 
-            # get dictionaries
-            zones = [zone.json for zone in zone_instances if zone.name in options.zonename]
+            # get zone
+            zones = [zone for zone in zone_instances if zone.name in options.zonename]
+            if len(zones) != 1:
+                LOG.error('No such a zone named %s' % options.zonename)
+                return
+            zone = zones[0]
 
-            # sort by key
-            if options.sort_by is not None:
-                zones = sorted(zones, key=lambda i: i[options.sort_by])
+            zone_properties = zone.get_properties(options.columns)
 
-            # filter columns
-            zones = [order_dict_with_keys(zone, options.columns)
-                     for zone in zones]
-            print_table(zones)
+            print(zone_properties)

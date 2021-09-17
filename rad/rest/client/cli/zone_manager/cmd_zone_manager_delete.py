@@ -39,4 +39,4 @@ class CmdZoneManagerDelete:
     def __init__(self, options):
         with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
             zone_manager = session.get_object(ZoneManager())
-            zone_manager.delete(options.zonename)
+            zone_manager.rad_method_delete(options.zonename)

@@ -15,6 +15,7 @@
 
 import argparse
 import logging
+from rad.rest.client.exceptions import RADError
 from rad.rest.client.util.print import print_table
 from rad.rest.client.api.authentication import Session
 from rad.rest.client.api.zfsmgr import ZfsDataset
@@ -35,15 +36,9 @@ class CmdZfsGetFilesystems:
         parser.add_argument('-s', '--sort',
                             help='Sort the filesystems')
         parser.add_argument('poolname',
+                            nargs='*',
                             help='Name of the pool')
 
     def __init__(self, options):
         with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
-            zfs_dataset = ZfsDataset()
-            zfs_dataset.rad_session = session
-            zfs_dataset.rad_instance_id = 'rpool'
-            print(zfs_dataset.get_filesystems().payload)
-
-            name_pattern = { 'name': options.poolname }
-            out = session.list_objects(ZfsDataset())
-            print(out)
+            raise RADError('NYI')
