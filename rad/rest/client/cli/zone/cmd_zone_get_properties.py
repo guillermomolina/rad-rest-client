@@ -14,11 +14,14 @@
 
 
 import argparse
+import json
 import logging
-from rad.rest.client.exceptions import RADException
-from rad.rest.client.util import print_table, order_dict_with_keys
+import yaml
+
+from rad.rest.client.rad_types import RADValueDumper
 from rad.rest.client.api.authentication import Session
 from rad.rest.client.api.zonemgr import Zone
+from rad.rest.client.api.zonemgr.zone import ZoneResourceJSONEncoder
 
 LOG = logging.getLogger(__name__)
 
@@ -35,6 +38,14 @@ class CmdZoneGetProperties:
                                        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                        description='Get properties of a zone',
                                        help='Get properties of a zone')
+        group = parser.add_mutually_exclusive_group()
+        group.add_argument('-y', '--yaml',
+                           action='store_true',
+                           help='Show output in yaml format')
+        group.add_argument('-j', '--json',
+                           action='store_true',
+                           default=True,
+                           help='Show output in json format')
         parser.add_argument('zonename',
                             help='Name of the zone')
 
@@ -43,17 +54,32 @@ class CmdZoneGetProperties:
             zone_instances = session.list_objects(Zone())
 
             # get zone
-            zones = [zone for zone in zone_instances if zone.name in options.zonename]
+            zones = [
+                zone for zone in zone_instances if zone.name in options.zonename]
             if len(zones) != 1:
                 LOG.error('No such a zone named %s' % options.zonename)
                 return
             zone = zones[0]
+            properties = zone.get_properties()
 
-            resources = zone.get_resources()
-            for resource in resources:
-                for property in resource.properties:
-                    type = ''
-                    if resource.type != 'global':
-                        type = '[%s]\t' % resource.type
-                    if property.value != '':
-                        print('%s%s: %s' % (type, property.name, property.value))
+            if options.json:
+                print(json.dumps(properties,
+                      indent=4, cls=ZoneResourceJSONEncoder))
+            elif options.yaml:
+                print(yaml.dump(properties, Dumper=RADValueDumper))
+            else:
+                self.print(properties)
+
+    def print(self, global_resource):
+        for property in global_resource.properties:
+            if property.value and property.name != 'zonename':
+                print('%s: %s' % (property.name, property.value))
+        for resource in global_resource.resources:
+            ident = '\t'
+            id_list = [
+                property.value for property in resource.properties if property.name == 'id']
+            id_str = '[%s]' % id_list[0] if len(id_list) == 1 else ''
+            print('%s%s:' % (resource.type, id_str))
+            for property in resource.properties:
+                if property.value and property.name != 'id':
+                    print('%s%s: %s' % (ident, property.name, property.value))
