@@ -76,9 +76,8 @@ class CmdZoneGetProperties:
                 print('%s: %s' % (property.name, property.value))
         for resource in global_resource.resources:
             ident = '\t'
-            id_list = [
-                property.value for property in resource.properties if property.name == 'id']
-            id_str = '[%s]' % id_list[0] if len(id_list) == 1 else ''
+            id = resource.get('id')
+            id_str = '[%s]' % id if id is not None else ''
             print('%s%s:' % (resource.type, id_str))
             for property in resource.properties:
                 if property.value and property.name != 'id':

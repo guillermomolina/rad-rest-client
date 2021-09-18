@@ -51,16 +51,21 @@ class Resource:
             self.properties = [Property(json=property)
                                for property in self.json.get('properties')]
 
+    def get(self, property_name):
+        properties = [
+            property for property in self.properties if property.name == property_name]
+        return properties[0] if len(properties) == 1 else None
+
     def to_json(self):
-        properties = {}
+        json = {}
         for property in self.properties:
-            properties[property.name] = property.value
-        json = {
-            'type': self.type,
-            'properties': properties
-        }
-        if len(self.resources) > 0:
-            json['resources'] = self.resources
+            if property.value:
+                json[property.name] = property.value
+        for resource in self.resources:
+            if resource.get('tmp-id') is not None:
+                json.setdefault(resource.type, []).append(resource.to_json())
+            else:
+                json[resource.type] = resource.to_json()
         return json
 
 
@@ -106,6 +111,12 @@ class Zone(RADInterface):
         return self.rad_method('getResources', json_body)
 
     def get_properties(self):
+        rad_response = self.rad_method_getResources(resource_scope_type='anet')
+        subresources = {}
+        if rad_response.status == 'success' and len(rad_response.payload) > 0:
+            for resource_instance in rad_response.payload:
+                subresources.setdefault(resource_instance['parent'], []).append(
+                    Resource(resource_instance))
         rad_response = self.rad_method_getResources()
         if rad_response.status != 'success':
             return
@@ -114,6 +125,11 @@ class Zone(RADInterface):
         resources = []
         for resource_instance in resource_instances:
             resource = Resource(resource_instance)
+            if resource_instance['type'] == 'anet':
+                key = '%s,tmp-id=%s' % (
+                    resource_instance['type'], str(resource.get('tmp-id').value))
+                if key in subresources:
+                    resource.resources = subresources[key]
             if resource_instance['type'] == 'global':
                 global_resource = resource
             else:
