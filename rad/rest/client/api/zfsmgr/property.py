@@ -18,10 +18,9 @@ from rad.rest.client.rad_types import RADInteger
 
 
 class Property:
-    def __init__(self, name, rad_type, detail=None):
+    def __init__(self, name, rad_type):
         self.name = name
         self.rad_type = rad_type
-        self.detail = detail
 
     def get_definition(self):
         definition = {'name': self.name}

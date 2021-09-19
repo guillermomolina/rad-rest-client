@@ -39,10 +39,15 @@ class RADValue:
 
 class RADBoolean(RADValue):
     def __init__(self, value):
-        super().__init__(value)
+        self.value = value in [True, 'True', 'true', '1', 1]
 
 
 class RADString(RADValue):
+    def __init__(self, value):
+        super().__init__(value)
+
+
+class RADArray(RADValue):
     def __init__(self, value):
         super().__init__(value)
 

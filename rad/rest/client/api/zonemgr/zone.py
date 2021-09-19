@@ -12,68 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from json.encoder import JSONEncoder
-from rad.rest.client.exceptions import RADException
 from rad.rest.client.api.zonemgr import RAD_NAMESPACE
 from rad.rest.client.api.rad_interface import RADInterface
-
-
-class Property:
-    def __init__(self, json=None):
-        self.json = json
-        self.load()
-
-    def load(self):
-        if self.json is None:
-            self.name = None
-            self.type = None
-            self.value = None
-            self.list_value = None
-        else:
-            self.name = self.json.get('name')
-            self.type = self.json.get('type')
-            self.value = self.json.get('value')
-            self.list_value = self.json.get('listvalue')
-
-
-class Resource:
-    def __init__(self, json=None):
-        self.json = json
-        self.load()
-
-    def load(self):
-        self.resources = []
-        if self.json is None:
-            self.type = None
-            self.properties = []
-        else:
-            self.type = self.json.get('type')
-            self.properties = [Property(json=property)
-                               for property in self.json.get('properties')]
-
-    def get(self, property_name):
-        properties = [
-            property for property in self.properties if property.name == property_name]
-        return properties[0] if len(properties) == 1 else None
-
-    def to_json(self):
-        json = {}
-        for property in self.properties:
-            if property.value:
-                json[property.name] = property.value
-        for resource in self.resources:
-            if resource.get('tmp-id') is not None:
-                json.setdefault(resource.type, []).append(resource.to_json())
-            else:
-                json[resource.type] = resource.to_json()
-        return json
-
-
-class ZoneResourceJSONEncoder(JSONEncoder):
-    def default(self, data):
-        if isinstance(data, Resource):
-            return data.to_json()
-        return str(data)
+from rad.rest.client.api.zonemgr.resources import ResourceFactory
 
 
 class Zone(RADInterface):
@@ -116,7 +57,7 @@ class Zone(RADInterface):
         if rad_response.status == 'success' and len(rad_response.payload) > 0:
             for resource_instance in rad_response.payload:
                 subresources.setdefault(resource_instance['parent'], []).append(
-                    Resource(resource_instance))
+                    ResourceFactory.from_json(resource_instance))
         rad_response = self.rad_method_getResources()
         if rad_response.status != 'success':
             return
@@ -124,13 +65,13 @@ class Zone(RADInterface):
         global_resource = None
         resources = []
         for resource_instance in resource_instances:
-            resource = Resource(resource_instance)
-            if resource_instance['type'] == 'anet':
+            resource = ResourceFactory.from_json(resource_instance)
+            if resource.type == 'anet':
                 key = '%s,tmp-id=%s' % (
-                    resource_instance['type'], str(resource.get('tmp-id').value))
+                    resource.type, str(resource.get('tmp-id').value))
                 if key in subresources:
                     resource.resources = subresources[key]
-            if resource_instance['type'] == 'global':
+            if resource.type == 'global':
                 global_resource = resource
             else:
                 resources.append(resource)
