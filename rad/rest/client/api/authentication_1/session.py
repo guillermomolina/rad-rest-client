@@ -23,7 +23,7 @@ from pathlib import Path
 from rad.rest.client import RADError, RADException
 from rad.rest.client.api.rad_interface import RADInterface
 from rad.rest.client.api.rad_response import RADResponse
-from rad.rest.client.api.authentication import RAD_NAMESPACE, RAD_API_VERSION
+from rad.rest.client.api.authentication_1 import RAD_NAMESPACE, RAD_API_VERSION
 
 LOG = logging.getLogger(__name__)
 

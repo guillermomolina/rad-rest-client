@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from rad.rest.client.api.zonemgr import RAD_NAMESPACE
+from rad.rest.client.api.zonemgr_1 import RAD_NAMESPACE
 from rad.rest.client.api.rad_interface import RADInterface
-from rad.rest.client.api.zonemgr.zone_resources import ZoneResourceFactory
+from rad.rest.client.api.zonemgr_1.zone_resources import ZoneResourceFactory
 
 
 class Zone(RADInterface):

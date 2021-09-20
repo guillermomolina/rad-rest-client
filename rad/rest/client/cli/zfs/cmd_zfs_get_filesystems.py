@@ -17,8 +17,8 @@ import argparse
 import logging
 from rad.rest.client.exceptions import RADError
 from rad.rest.client.util.print import print_table
-from rad.rest.client.api.authentication import Session
-from rad.rest.client.api.zfsmgr import ZfsDataset
+from rad.rest.client.api.authentication_1 import Session
+from rad.rest.client.api.zfsmgr_1 import ZfsDataset
 
 
 class CmdZfsGetFilesystems:

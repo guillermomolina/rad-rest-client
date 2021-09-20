@@ -16,13 +16,13 @@
 import argparse
 import logging
 import json
-from rad.rest.client.api.zfsmgr.zpool_resource import ZpoolResource
+from rad.rest.client.api.zfsmgr_1.zpool_resource import ZpoolResource
 import yaml
 
 from rad.rest.client.api.rad_values import RADValueDumper, RADValueJSONEncoder
 from rad.rest.client.util import print_table, order_dict_with_keys, print_parsable
-from rad.rest.client.api.authentication import Session
-from rad.rest.client.api.zfsmgr import Zpool
+from rad.rest.client.api.authentication_1 import Session
+from rad.rest.client.api.zfsmgr_1 import Zpool
 
 LOG = logging.getLogger(__name__)
 

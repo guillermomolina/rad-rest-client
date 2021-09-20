@@ -13,8 +13,8 @@
 # limitations under the License.
 
 from rad.rest.client.api.rad_interface import RADInterface
-from rad.rest.client.api.zfsmgr import RAD_NAMESPACE
-from rad.rest.client.api.zfsmgr.zpool_resource import ZpoolResource
+from rad.rest.client.api.zfsmgr_1 import RAD_NAMESPACE
+from rad.rest.client.api.zfsmgr_1.zpool_resource import ZpoolResource
 
 
 class Zpool(RADInterface):

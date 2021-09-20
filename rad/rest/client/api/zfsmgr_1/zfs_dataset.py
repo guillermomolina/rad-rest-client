@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from rad.rest.client.api.zfsmgr.zfs_resource import ZfsResource
+from rad.rest.client.api.zfsmgr_1.zfs_resource import ZfsResource
 from rad.rest.client.api.rad_values import RADByte, RADPath
 from rad.rest.client.exceptions import RADException
 from rad.rest.client.api.rad_interface import RADInterface
-from rad.rest.client.api.zfsmgr import RAD_NAMESPACE
-from rad.rest.client.api.zfsmgr.zfs_property import ZfsProperty
+from rad.rest.client.api.zfsmgr_1 import RAD_NAMESPACE
+from rad.rest.client.api.zfsmgr_1.zfs_property import ZfsProperty
 
 
 class ZfsDataset(RADInterface):

@@ -20,9 +20,9 @@ import yaml
 
 from rad.rest.client.api.rad_values import RADValueDumper, RADValueJSONEncoder
 from rad.rest.client.util import print_table, order_dict_with_keys, print_parsable
-from rad.rest.client.api.authentication import Session
-from rad.rest.client.api.zfsmgr import ZfsDataset
-from rad.rest.client.api.zfsmgr.zfs_resource import ZfsResource
+from rad.rest.client.api.authentication_1 import Session
+from rad.rest.client.api.zfsmgr_1 import ZfsDataset
+from rad.rest.client.api.zfsmgr_1.zfs_resource import ZfsResource
 
 LOG = logging.getLogger(__name__)
 

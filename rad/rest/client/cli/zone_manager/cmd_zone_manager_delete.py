@@ -15,8 +15,8 @@
 
 import argparse
 import logging
-from rad.rest.client.api.authentication import Session
-from rad.rest.client.api.zonemgr import ZoneManager
+from rad.rest.client.api.authentication_1 import Session
+from rad.rest.client.api.zonemgr_1 import ZoneManager
 
 LOG = logging.getLogger(__name__)
 

@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from rad.rest.client.api.zfsmgr.zfs_resource import ZfsResource
-from rad.rest.client.api.zfsmgr.zfs_property import ZfsProperty
+from rad.rest.client.api.zfsmgr_1.zfs_resource import ZfsResource
+from rad.rest.client.api.zfsmgr_1.zfs_property import ZfsProperty
 from rad.rest.client.api.rad_values import RADByte, RADPath, RADString, RADBoolean
 
 

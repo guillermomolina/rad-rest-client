@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from rad.rest.client.api.resource import Resource
-from rad.rest.client.api.zfsmgr.zfs_property import ZfsProperty
+from rad.rest.client.api.zfsmgr_1.zfs_property import ZfsProperty
 from rad.rest.client.api.rad_values import RADPath, RADByte
 
 

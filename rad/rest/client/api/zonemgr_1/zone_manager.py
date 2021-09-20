@@ -14,7 +14,7 @@
 
 import logging
 
-from rad.rest.client.api.zonemgr import RAD_NAMESPACE
+from rad.rest.client.api.zonemgr_1 import RAD_NAMESPACE
 from rad.rest.client.api.rad_interface import RADInterface
 
 LOG = logging.getLogger(__name__)

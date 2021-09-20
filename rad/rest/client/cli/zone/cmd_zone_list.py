@@ -16,8 +16,8 @@
 import argparse
 import logging
 from rad.rest.client.util import print_table, order_dict_with_keys
-from rad.rest.client.api.authentication import Session
-from rad.rest.client.api.zonemgr import Zone
+from rad.rest.client.api.authentication_1 import Session
+from rad.rest.client.api.zonemgr_1 import Zone
 
 LOG = logging.getLogger(__name__)
 

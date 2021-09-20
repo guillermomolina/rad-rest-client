@@ -19,9 +19,9 @@ import logging
 import yaml
 
 from rad.rest.client.api.rad_values import RADValueDumper
-from rad.rest.client.api.authentication import Session
-from rad.rest.client.api.zonemgr import Zone
-from rad.rest.client.api.zonemgr.zone_resources import ZoneResourceJSONEncoder
+from rad.rest.client.api.authentication_1 import Session
+from rad.rest.client.api.zonemgr_1 import Zone
+from rad.rest.client.api.zonemgr_1.zone_resources import ZoneResourceJSONEncoder
 
 LOG = logging.getLogger(__name__)
 
