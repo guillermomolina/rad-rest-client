@@ -13,4 +13,4 @@
 # limitations under the License.
 
 from .version import __version__
-from .exceptions import RADException, RADError
+from .exceptions import RADException, RADError, NotFoundError, ObjectError

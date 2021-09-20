@@ -22,3 +22,13 @@ class RADException(Exception):
 class RADError(RADException):
     def __init__(self, message="RAD Client fatal error"):
         super().__init__(message)
+
+
+class NotFoundError(RADException):
+    def __init__(self, message="Object not found"):
+        super().__init__(message)
+
+
+class ObjectError(RADException):
+    def __init__(self, message="Object error"):
+        super().__init__(message)

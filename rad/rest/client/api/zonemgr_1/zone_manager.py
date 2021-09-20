@@ -32,7 +32,7 @@ class ZoneManager(RADInterface):
         else:
             self.evacuationState = self.json.get('evacuationState')
 
-    def rad_method_create(self, name, path=None, template=None):
+    def create(self, name, path=None, template=None):
         json_body = {
             'name': name,
             'path': path,
@@ -41,7 +41,7 @@ class ZoneManager(RADInterface):
 
         return self.rad_method('create', json_body)
 
-    def rad_method_importConfig(self, noexecute, name, configuration):
+    def importConfig(self, noexecute, name, configuration):
         json_body = {
             'noexecute': noexecute,
             'name': name,
@@ -50,7 +50,7 @@ class ZoneManager(RADInterface):
 
         return self.rad_method('importConfig', json_body)
 
-    def rad_method_delete(self, name):
+    def delete(self, name):
         json_body = {'name': name}
 
         return self.rad_method('delete', json_body)

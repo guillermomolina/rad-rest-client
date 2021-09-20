@@ -46,13 +46,13 @@ class CmdZoneManagerImportConfig:
 
     def __init__(self, options):
         try:
-            with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
+            with Session(protocol=options.protocol, hostname=options.hostname, port=options.port) as session:
                 zone_manager = session.get_object(ZoneManager())
                 configuration = options.config
                 if options.file is not None:
                     with open(options.file, "r") as f:
                         configuration = f.read()
-                zone_manager.rad_method_importConfig(options.no_execute, options.zonename, configuration)
+                zone_manager.importConfig(options.no_execute, options.zonename, configuration)
         except (OSError, IOError) as e:
             LOG.error(str(e))
 

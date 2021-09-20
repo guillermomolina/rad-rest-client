@@ -39,11 +39,11 @@ class Zone(RADInterface):
             self.auxstate = self.json.get('auxstate')
             self.state = self.json.get('state')
 
-    def rad_method_getResourceProperties(self, resource_names=None):
+    def getResourceProperties(self, resource_names=None):
         json_body = {"filter": {"type": "device"}}
         return self.rad_method('getResourceProperties', json_body)
 
-    def rad_method_getResources(self, resource_type=None, resource_scope_type=None):
+    def getResources(self, resource_type=None, resource_scope_type=None):
         json_body = {}
         if resource_type is not None:
             json_body['filter'] = {"type": resource_type}
@@ -52,13 +52,13 @@ class Zone(RADInterface):
         return self.rad_method('getResources', json_body)
 
     def get_properties(self):
-        rad_response = self.rad_method_getResources(resource_scope_type='anet')
+        rad_response = self.getResources(resource_scope_type='anet')
         subresources = {}
         if rad_response.status == 'success' and len(rad_response.payload) > 0:
             for resource_instance in rad_response.payload:
                 subresources.setdefault(resource_instance['parent'], []).append(
                     ZoneResourceFactory.from_json(resource_instance))
-        rad_response = self.rad_method_getResources()
+        rad_response = self.getResources()
         if rad_response.status != 'success':
             return
         resource_instances = rad_response.payload

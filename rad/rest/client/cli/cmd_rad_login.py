@@ -66,6 +66,6 @@ class CmdLogin:
                 verify = True
             else:
                 verify = False
-        with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
+        with Session(protocol=options.protocol, hostname=options.hostname, port=options.port) as session:
             session.login(options.username, str(options.password),
                           ssl_cert_verify=verify, ssl_cert_path=options.ssl_cert_path)

@@ -19,8 +19,9 @@ import os
 import pickle
 import requests
 from pathlib import Path
+from urllib.parse import urlparse
 
-from rad.rest.client import RADError, RADException
+from rad.rest.client import RADError, RADException, NotFoundError
 from rad.rest.client.api.rad_interface import RADInterface
 from rad.rest.client.api.rad_response import RADResponse
 from rad.rest.client.api.authentication_1 import RAD_NAMESPACE, RAD_API_VERSION
@@ -36,11 +37,19 @@ def modification_date(filename):
 class Session(RADInterface):
     RAD_COLLECTION = 'Session'
 
-    def __init__(self, hostname, protocol='https', port=6788):
+    def __init__(self, protocol='https', hostname=None, port=6788, url=None):
         super().__init__(RAD_NAMESPACE, Session.RAD_COLLECTION, RAD_API_VERSION)
-        self.protocol = protocol
-        self.hostname = hostname
-        self.port = port
+        if hostname is not None:
+            self.hostname = hostname
+            self.protocol = protocol
+            self.port = port
+        elif url is not None:
+            parsed_url = urlparse(url)
+            self.hostname = parsed_url.netloc
+            self.protocol = parsed_url.scheme
+            self.port = parsed_url.port
+        else:
+            raise RADException('hostname or url is needed')
         self.session = None
         self.max_session_time = 0
         filename = '~/.cache/rad/{}_{}_{}.dat'.format(
@@ -148,7 +157,7 @@ class Session(RADInterface):
             output.append(new_rad_object)
         return output
 
-    def get_object(self, rad_object, detailed=True):
+    def get_object(self, rad_object, pattern=None, detailed=True):
         # if rad_object.rad_instance_id is None:
         #    raise RADException('Can not get instance from a collection')
         rad_object.rad_session = self
@@ -156,8 +165,12 @@ class Session(RADInterface):
             path = '?_rad_detail'
         else:
             path = None
+        if pattern is not None and pattern.get('name') is not None:
+            rad_object.rad_instance_id = pattern.get('name')
         response = rad_object.request('GET', path)
         if response.status != 'success':
+            if response.status == 'object not found':
+                raise NotFoundError(response.status)
             LOG.error(response.status)
             raise RADError(message='Request Failed')
         item = response.payload
