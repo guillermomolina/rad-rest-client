@@ -16,6 +16,7 @@
 from pathlib import Path
 from functools import total_ordering
 from json import JSONEncoder
+from rad.rest.client.exceptions import RADException
 from typing import OrderedDict
 from yaml import SafeDumper
 
@@ -24,7 +25,10 @@ from yaml import SafeDumper
 class RADValue:
     RIGHT_ALIGNED = False
 
-    def __init__(self, value):
+    def __init__(self):
+        self.value = None
+
+    def load(self, value):
         self.value = value
 
     def __str__(self):
@@ -38,48 +42,60 @@ class RADValue:
 
 
 class RADBoolean(RADValue):
-    def __init__(self, value):
-        self.value = value in [True, 'True', 'true', '1', 1]
+    def __init__(self, trueValue='true', falseValue='false', *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.trueValue = trueValue
+        self.falseValue = falseValue
+
+    def load(self, value):
+        if value == self.trueValue:
+            self.value = True
+        elif value == self.falseValue:
+            self.value = False
+        else:
+            raise RADException('Boolean defined value %s is not %s or %s' % (
+                str(value), str(self.trueValue), str(self.falseValue)))
+
+    def __str__(self):
+        return self.trueValue if self.value else self.falseValue
 
 
 class RADString(RADValue):
-    def __init__(self, value):
-        super().__init__(value)
-
+    pass
 
 class RADArray(RADValue):
-    def __init__(self, value):
-        super().__init__(value)
+    pass
 
 
-@total_ordering
 class RADPath(RADString):
-    def __init__(self, value):
-        super().__init__(value)
+
+    def load(self, value):
+        self.value = value
+        if value == '-':
+            self.value = None
+
+    def __str__(self):
+        if self.value is None:
+            return '-'
+        return self.value
 
 
 class RadNumber(RADValue):
     RIGHT_ALIGNED = True
 
-    def __init__(self, value):
-        super().__init__(value)
-
 
 class RADInteger(RadNumber):
-    def __init__(self, value):
+    def load(self, value):
         self.value = int(value)
 
 
 class RADFloat(RadNumber):
-    def __init__(self, value):
+    def load(self, value):
         self.value = float(value)
 
 
 class RADSize(RADInteger):
     POWER_LABELS = {0: '', 1: 'K', 2: 'M', 3: 'G', 4: 'T', 5: 'P', 6: 'E'}
-
-    def __init__(self, value):
-        super().__init__(value)
 
     def __str__(self):
         # 2**10 = 1024
@@ -95,9 +111,6 @@ class RADSize(RADInteger):
 
 class RADByte(RADSize):
     UNIT_LABEL = {'B'}
-
-    def __init__(self, value):
-        super().__init__(value)
 
     def __str__(self):
         string = super().__str__()

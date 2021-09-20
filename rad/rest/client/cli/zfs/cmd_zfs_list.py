@@ -18,10 +18,11 @@ import logging
 import json
 import yaml
 
-from rad.rest.client.rad_types import RADValueDumper, RADValueJSONEncoder
+from rad.rest.client.api.rad_values import RADValueDumper, RADValueJSONEncoder
 from rad.rest.client.util import print_table, order_dict_with_keys, print_parsable
 from rad.rest.client.api.authentication import Session
 from rad.rest.client.api.zfsmgr import ZfsDataset
+from rad.rest.client.api.zfsmgr.zfs_resource import ZfsResource
 
 LOG = logging.getLogger(__name__)
 
@@ -40,12 +41,12 @@ class CmdZfsList:
                                                  help='List zfs datasets')
         parser.add_argument('-c', '--columns',
                             nargs='+',
-                            choices=ZfsDataset.property_names(),
+                            choices=ZfsResource.get_property_names(),
                             default=['name', 'used', 'available',
                                      'referenced', 'mountpoint'],
                             help='Specify wich columns to show in the table')
         parser.add_argument('-s', '--sort-by',
-                            choices=ZfsDataset.property_names(),
+                            choices=ZfsResource.get_property_names(),
                             default='name',
                             help='Specify the sort order in the table')
         group = parser.add_mutually_exclusive_group()
@@ -66,10 +67,14 @@ class CmdZfsList:
         with Session(options.hostname, protocol=options.protocol, port=options.port) as session:
             zfs_dataset_instances = session.list_objects(ZfsDataset())
 
+            zfs_resources = [instance.get_properties(options.columns) for instance in zfs_dataset_instances]
+
             zfs_datasets = []
-            for zfs_dataset_instance in zfs_dataset_instances:
-                zfs_datasets.append(
-                    zfs_dataset_instance.get_properties(options.columns))
+            for zfs_resource in zfs_resources:
+                resource = {}
+                for property in zfs_resource.properties:
+                    resource[property.name] = property.value
+                zfs_datasets.append(resource)
 
             # sort by key
             if options.sort_by is not None and options.sort_by in options.columns:

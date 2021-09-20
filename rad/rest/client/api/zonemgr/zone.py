@@ -14,7 +14,7 @@
 
 from rad.rest.client.api.zonemgr import RAD_NAMESPACE
 from rad.rest.client.api.rad_interface import RADInterface
-from rad.rest.client.api.zonemgr.resources import ResourceFactory
+from rad.rest.client.api.zonemgr.zone_resources import ZoneResourceFactory
 
 
 class Zone(RADInterface):
@@ -57,7 +57,7 @@ class Zone(RADInterface):
         if rad_response.status == 'success' and len(rad_response.payload) > 0:
             for resource_instance in rad_response.payload:
                 subresources.setdefault(resource_instance['parent'], []).append(
-                    ResourceFactory.from_json(resource_instance))
+                    ZoneResourceFactory.from_json(resource_instance))
         rad_response = self.rad_method_getResources()
         if rad_response.status != 'success':
             return
@@ -65,7 +65,7 @@ class Zone(RADInterface):
         global_resource = None
         resources = []
         for resource_instance in resource_instances:
-            resource = ResourceFactory.from_json(resource_instance)
+            resource = ZoneResourceFactory.from_json(resource_instance)
             if resource.type == 'anet':
                 key = '%s,tmp-id=%s' % (
                     resource.type, str(resource.get('tmp-id').value))

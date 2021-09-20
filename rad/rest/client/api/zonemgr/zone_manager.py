@@ -14,8 +14,6 @@
 
 import logging
 
-from rad.rest.client import RADError
-from rad.rest.client.api.rad_response import RADResponse
 from rad.rest.client.api.zonemgr import RAD_NAMESPACE
 from rad.rest.client.api.rad_interface import RADInterface
 

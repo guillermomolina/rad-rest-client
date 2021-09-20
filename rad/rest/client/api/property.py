@@ -12,18 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-
-from rad.rest.client.rad_types import RADInteger
+from rad.rest.client import RADException
+from rad.rest.client.api.rad_values import RADString
 
 
 class Property:
-    def __init__(self, name, rad_type):
+    def __init__(self, name, value=RADString()):
         self.name = name
-        self.rad_type = rad_type
+        self.value = value
+        self.json = None
 
-    def get_definition(self):
-        definition = {'name': self.name}
-        if issubclass(self.rad_type, RADInteger):
-            definition['integer_val'] = True
-        return definition
+    def load(self, json):
+        self.json = json
+        value = json.get('listvalue') or json.get('value')
+        if self.name != self.json.get('name'):
+            raise RADException('Could not load property %s=%s' % (
+                self.json.get('name'), value))
+
+        self.value.load(value)

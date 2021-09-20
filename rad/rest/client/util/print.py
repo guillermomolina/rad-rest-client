@@ -16,7 +16,7 @@
 # TODO: use from prettytable import PrettyTable ?
 
 
-from rad.rest.client.rad_types import RADValue
+from rad.rest.client.api.rad_values import RADValue
 
 
 def print_table(data, truncate=True, separation=2, identation=0):

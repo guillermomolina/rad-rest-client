@@ -12,25 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from rad.rest.client.rad_types import RADByte, RADPath
+from rad.rest.client.api.zfsmgr.zfs_resource import ZfsResource
+from rad.rest.client.api.rad_values import RADByte, RADPath
 from rad.rest.client.exceptions import RADException
-from rad.rest.client.api.zfsmgr import RAD_NAMESPACE, Property
 from rad.rest.client.api.rad_interface import RADInterface
+from rad.rest.client.api.zfsmgr import RAD_NAMESPACE
+from rad.rest.client.api.zfsmgr.zfs_property import ZfsProperty
 
 
 class ZfsDataset(RADInterface):
     RAD_COLLECTION = 'ZfsDataset'
-    PROPERTIES = [
-        Property('name', RADPath),
-        Property('used', RADByte),
-        Property('available', RADByte),
-        Property('referenced', RADByte),
-        Property('mountpoint', RADPath)
-    ]
-
-    @classmethod
-    def property_names(cls):
-        return [property.name for property in cls.PROPERTIES]
 
     def __init__(self, *args, **kwargs):
         super().__init__(RAD_NAMESPACE, ZfsDataset.RAD_COLLECTION, *args, **kwargs)
@@ -45,7 +36,7 @@ class ZfsDataset(RADInterface):
             property_names = ZfsDataset.property_names()
 
         props = [property.get_definition()
-                 for property in ZfsDataset.PROPERTIES if property.name in property_names]
+                 for property in ZfsResource.PROPERTIES if property.name in property_names]
         json_body = {"props": props}
         return self.rad_method('get_props', json_body)
 
@@ -54,15 +45,6 @@ class ZfsDataset(RADInterface):
         if rad_response.status != 'success':
             return
         property_instances = rad_response.payload
-        properties = {}
-        for property_instance in property_instances:
-            if property_instance['error'] is not None:
-                raise RADException(
-                    property_instance['error'].get('libzfs_errstr'))
-            rad_types = [
-                rad_property.rad_type for rad_property in ZfsDataset.PROPERTIES if rad_property.name == property_instance['name']]
-            if len(rad_types) != 1:
-                raise RADException('len(rad_types) != 1')
-            properties[property_instance['name']] = rad_types[0](
-                property_instance['value'])
-        return properties
+        resource = ZfsResource()
+        resource.load(property_instances)
+        return resource
