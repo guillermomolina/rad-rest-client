@@ -22,6 +22,7 @@ from rad.rest.client.cli.zone import CmdZone
 from rad.rest.client.cli.zone_manager import CmdZoneManager
 from rad.rest.client.cli.zpool import CmdZpool
 from rad.rest.client.cli.zfs import CmdZfs
+from rad.rest.client.cli.kstat import CmdKstat
 
 LOG = logging.getLogger(__name__)
 
@@ -46,7 +47,7 @@ class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
 
 
 class CmdRAD:
-    commands = [CmdLogin, CmdZone, CmdZoneManager, CmdZfs, CmdZpool]
+    commands = [CmdLogin, CmdZone, CmdZoneManager, CmdZfs, CmdZpool, CmdKstat]
 
     def __init__(self):
         parser = argparse.ArgumentParser(

@@ -13,20 +13,20 @@
 # limitations under the License.
 
 import logging
-from rad.rest.client.exceptions import NotFoundError, ObjectError
+import urllib
 
-from rad.rest.client import RADError, RADException
+from rad.rest.client import RADError, RADException, NotFoundError, ObjectError
 from rad.rest.client.api.rad_response import RADResponse
 
 LOG = logging.getLogger(__name__)
 
 
 class RADInterface(object):
-    def __init__(self, rad_namespace, rad_collection, rad_api_version=None, href=None, rad_session=None, json=None):
+    def __init__(self, rad_namespace, rad_collection, rad_api_version=None, href=None, _conn=None, json=None):
         self.rad_namespace = rad_namespace
         self.rad_collection = rad_collection
         self.rad_api_version = rad_api_version or '1.0'
-        self.rad_session = rad_session
+        self._conn = _conn
         self.rad_instance_id = None
         if href is not None:
             self.href = href
@@ -44,7 +44,7 @@ class RADInterface(object):
             return href
         return '%(href)s/%(id)s' % {
             'href': href,
-            'id': self.rad_instance_id
+            'id': urllib.parse.quote(self.rad_instance_id, safe=',')
         }
 
     @href.setter
@@ -57,8 +57,10 @@ class RADInterface(object):
         self.rad_namespace = parts[1]
         self.rad_api_version = parts[2]
         self.rad_collection = parts[3]
-        if len(parts) > 4 and parts[4] != '':
-            self.rad_instance_id = '/'.join(parts[4:])
+        if len(parts) == 5 and parts[4] != '':
+            self.rad_instance_id = urllib.parse.unquote(parts[4])
+        # elif len(parts) > 5:
+        #     raise RADError('NYI')
         else:
             self.rad_instance_id = None
 
@@ -67,12 +69,12 @@ class RADInterface(object):
 
     def request(self, method, path=None, **kwargs):
         if path is None:
-            url = '{}/{}'.format(self.rad_session.url, self.href)
+            url = '{}/{}'.format(self._conn.url, self.href)
         else:
-            url = '{}/{}{}'.format(self.rad_session.url, self.href, path)
-        if self.rad_session is None:
-            raise RADError('rad_session is undefined')
-        res = self.rad_session.session.request(method, url, **kwargs)
+            url = '{}/{}{}'.format(self._conn.url, self.href, path)
+        if self._conn is None:
+            raise RADError('_conn is undefined')
+        res = self._conn.session.request(method, url, **kwargs)
         return RADResponse(res)
 
     def rad_method(self, method, json_body, **kwargs):

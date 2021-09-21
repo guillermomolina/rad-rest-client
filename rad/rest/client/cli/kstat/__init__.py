@@ -12,8 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-RAD_NAMESPACE = 'com.oracle.solaris.rad.kstat'
-RAD_API_VERSION = '2.0'
-
-from .control import Control
-from .kstat import Kstat
+from .cmd_kstat import CmdKstat

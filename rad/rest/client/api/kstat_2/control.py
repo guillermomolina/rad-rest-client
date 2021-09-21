@@ -12,8 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-RAD_NAMESPACE = 'com.oracle.solaris.rad.kstat'
-RAD_API_VERSION = '2.0'
+import logging
 
-from .control import Control
-from .kstat import Kstat
+from rad.rest.client.api.rad_interface import RADInterface
+from rad.rest.client.api.kstat_2 import RAD_API_VERSION, RAD_NAMESPACE
+
+
+LOG = logging.getLogger(__name__)
+
+
+class Control(RADInterface):
+    RAD_COLLECTION = 'Control'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(RAD_NAMESPACE, Control.RAD_COLLECTION,
+                         RAD_API_VERSION, *args, **kwargs)
+
+    def update(self):
+         return self.rad_method('update', {})

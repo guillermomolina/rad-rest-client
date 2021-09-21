@@ -51,6 +51,7 @@ class Session(RADInterface):
         else:
             raise RADException('hostname or url is needed')
         self.session = None
+        self.closed = None
         self.max_session_time = 0
         filename = '~/.cache/rad/{}_{}_{}.dat'.format(
             self.protocol, self.hostname, self.port)
@@ -140,7 +141,7 @@ class Session(RADInterface):
     def list_objects(self, rad_object, detailed=True):
         # if rad_object.rad_instance_id is not None:
         #    raise RADException('Can not list instances from an instance')
-        rad_object.rad_session = self
+        rad_object._conn = self
         if detailed:
             path = '?_rad_detail'
         else:
@@ -152,7 +153,7 @@ class Session(RADInterface):
         for item in response.payload:
             collection_class = rad_object.__class__
             collection = collection_class.RAD_COLLECTION
-            new_rad_object = collection_class(rad_session=self, href=item.get(
+            new_rad_object = collection_class(_conn=self, href=item.get(
                 'href'), json=item.get(collection))
             output.append(new_rad_object)
         return output
@@ -160,13 +161,16 @@ class Session(RADInterface):
     def get_object(self, rad_object, pattern=None, detailed=True):
         # if rad_object.rad_instance_id is None:
         #    raise RADException('Can not get instance from a collection')
-        rad_object.rad_session = self
+        rad_object._conn = self
         if detailed:
             path = '?_rad_detail'
         else:
             path = None
-        if pattern is not None and pattern.get('name') is not None:
-            rad_object.rad_instance_id = pattern.get('name')
+        if pattern is not None:
+            if pattern.get('name') is not None:
+                rad_object.rad_instance_id = pattern.get('name')
+            elif pattern.get('uri') is not None:
+                rad_object.rad_instance_id = pattern.get('uri')
         response = rad_object.request('GET', path)
         if response.status != 'success':
             if response.status == 'object not found':
@@ -176,6 +180,6 @@ class Session(RADInterface):
         item = response.payload
         collection_class = rad_object.__class__
         collection = collection_class.RAD_COLLECTION
-        new_rad_object = collection_class(rad_session=self, href=item.get(
+        new_rad_object = collection_class(_conn=self, href=item.get(
             'href'), json=item.get(collection))
         return new_rad_object
