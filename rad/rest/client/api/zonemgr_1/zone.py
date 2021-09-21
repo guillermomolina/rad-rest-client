@@ -52,16 +52,12 @@ class Zone(RADInterface):
         return self.rad_method('getResources', json_body)
 
     def get_properties(self):
-        rad_response = self.getResources(resource_scope_type='anet')
+        payload = self.getResources(resource_scope_type='anet')
         subresources = {}
-        if rad_response.status == 'success' and len(rad_response.payload) > 0:
-            for resource_instance in rad_response.payload:
-                subresources.setdefault(resource_instance['parent'], []).append(
-                    ZoneResourceFactory.from_json(resource_instance))
-        rad_response = self.getResources()
-        if rad_response.status != 'success':
-            return
-        resource_instances = rad_response.payload
+        for resource_instance in payload:
+            subresources.setdefault(resource_instance['parent'], []).append(
+                ZoneResourceFactory.from_json(resource_instance))
+        resource_instances = self.getResources()
         global_resource = None
         resources = []
         for resource_instance in resource_instances:

@@ -163,12 +163,11 @@ class GlobalResource(Resource):
         KeysourceResource()
     ]
 
-    def __new__(cls, type, filter=None):
-        if cls is GlobalResource:
-            if type == 'capped-memory':   return CappedMemoryResource()
-            if type == 'anet': return AnetResource()
-        else:
-            return super(GlobalResource, cls).__new__(cls, type)
+    def __new__(cls, type=None, filter=None):
+        if type is not None:
+            concrete_class = ZoneResourceFactory.get_type(type)
+            return concrete_class()
+        return super(GlobalResource, cls).__new__(cls)
 
 
     def __init__(self, *args, **kwargs):

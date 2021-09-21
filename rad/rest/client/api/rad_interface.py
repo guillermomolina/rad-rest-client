@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import logging
+from rad.rest.client.exceptions import NotFoundError, ObjectError
 
 from rad.rest.client import RADError, RADException
 from rad.rest.client.api.rad_response import RADResponse
@@ -81,5 +82,7 @@ class RADInterface(object):
             LOG.error(response.status)
             LOG.error(response.payload.get('code'))
             LOG.error(response.payload.get('stderr'))
-            raise RADError(message=response.payload.get('stderr'))
-        return response
+            if response.status == 'object not found':
+                raise NotFoundError(response.status)
+            raise ObjectError(message=response.payload.get('stderr'))
+        return response.payload

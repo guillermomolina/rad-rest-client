@@ -41,10 +41,7 @@ class ZfsDataset(RADInterface):
         return self.rad_method('get_props', json_body)
 
     def get_properties(self, property_names=None):
-        rad_response = self.get_props(property_names)
-        if rad_response.status != 'success':
-            return
-        property_instances = rad_response.payload
+        property_instances = self.get_props(property_names)
         resource = ZfsResource()
         resource.load(property_instances)
         return resource
