@@ -39,7 +39,7 @@ class Zone(RADInterface):
             self.auxstate = self.json.get('auxstate')
             self.state = self.json.get('state')
 
-    def getResourceProperties(self, resource_names=None):
+    def getResourceProperties(self, resource=None, resource_properties=None):
         json_body = {"filter": {"type": "device"}}
         return self.rad_method('getResourceProperties', json_body)
 

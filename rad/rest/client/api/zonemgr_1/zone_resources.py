@@ -35,6 +35,17 @@ class VlanResource(Resource):
         super().__init__(VlanResource.TYPE, *args, **kwargs)
 
 
+class MacResource(Resource):
+    TYPE = 'mac'
+    PROPERTIES = [
+        Property('tmp-id', RADInteger())
+    ]
+    RESOURCE_TYPES = []
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(MacResource.TYPE, *args, **kwargs)
+
+
 class AnetResource(Resource):
     TYPE = 'anet'
     PROPERTIES = [
@@ -53,8 +64,10 @@ class AnetResource(Resource):
         Property('mac-address'),
         Property('auto-mac-address')
     ]
-    RESOURCE_TYPES = [VlanResource()]
-
+    RESOURCE_TYPES = [
+        VlanResource(),
+        MacResource()
+    ]
     def __init__(self, *args, **kwargs):
         super().__init__(AnetResource.TYPE, *args, **kwargs)
 
@@ -141,7 +154,22 @@ class GlobalResource(Resource):
         Property('host-compatible'),
         Property('boot-disk-protection')
     ]
-    RESOURCE_TYPES = [AnetResource()]
+    RESOURCE_TYPES = [
+        AnetResource(),
+        DeviceResource(),
+        CappedMemoryResource(),
+        VirtualCpuResource(),
+        SuspendResource(),
+        KeysourceResource()
+    ]
+
+    def __new__(cls, type, filter=None):
+        if cls is GlobalResource:
+            if type == 'capped-memory':   return CappedMemoryResource()
+            if type == 'anet': return AnetResource()
+        else:
+            return super(GlobalResource, cls).__new__(cls, type)
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(GlobalResource.TYPE, *args, **kwargs)
@@ -150,7 +178,7 @@ class GlobalResource(Resource):
 class ZoneResourceFactory:
     @staticmethod
     def get_type(resource_type):
-        resources = [GlobalResource, AnetResource, DeviceResource, VlanResource,
+        resources = [GlobalResource, AnetResource, DeviceResource, VlanResource, MacResource,
                      CappedMemoryResource, VirtualCpuResource, SuspendResource, KeysourceResource]
         for resource in resources:
             if resource.TYPE == resource_type:

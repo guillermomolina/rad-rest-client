@@ -16,3 +16,4 @@ RAD_NAMESPACE = 'com.oracle.solaris.rad.zonemgr'
 
 from .zone import Zone
 from .zone_manager import ZoneManager
+from .zone_resources import GlobalResource as Resource
