@@ -18,8 +18,7 @@ import logging
 import json
 import yaml
 
-from rad.rest.client.api.rad_values import RADValueDumper, RADValueJSONEncoder
-from rad.rest.client.util import print_table, order_dict_with_keys, print_parsable
+from rad.rest.client.util import print_table, print_parsable
 from rad.rest.client.api.authentication_1 import Session
 from rad.rest.client.api.zfsmgr_1 import ZfsDataset
 from rad.rest.client.api.zfsmgr_1.zfs_resource import ZfsResource
@@ -73,7 +72,7 @@ class CmdZfsList:
             for zfs_resource in zfs_resources:
                 resource = {}
                 for property in zfs_resource.properties:
-                    resource[property.name] = property.value
+                    resource[property.name] = property
                 zfs_datasets.append(resource)
 
             # sort by key
@@ -81,14 +80,12 @@ class CmdZfsList:
                 zfs_datasets = sorted(
                     zfs_datasets, key=lambda i: i[options.sort_by])
 
-            # filter columns
-            # zfs_datasets = [order_dict_with_keys(zfs_dataset, options.columns)
-            #                 for zfs_dataset in zfs_datasets]
-
             if options.json:
-                print(json.dumps(zfs_datasets, indent=4, cls=RADValueJSONEncoder))
+                resources = [resource.to_json() for resource in zfs_resources]
+                print(json.dumps(resources, indent=4))
             elif options.yaml:
-                print(yaml.dump(zfs_datasets, Dumper=RADValueDumper))
+                resources = [resource.to_json() for resource in zfs_resources]
+                print(yaml.dump(resources))
             elif options.delimiter is not None:
                 print_parsable(zfs_datasets, options.delimiter)
             elif options.table:

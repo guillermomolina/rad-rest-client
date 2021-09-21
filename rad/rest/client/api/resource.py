@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from json.encoder import JSONEncoder
 import logging
 import copy
 
 from rad.rest.client import RADException
-from rad.rest.client.api.property import Property
-from rad.rest.client.api.rad_values import RADString
+from rad.rest.client.api.properties import Property
 
 LOG = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ class Resource:
                 return copy.deepcopy(property)
         LOG.warning('No such a property %s defined in resource %s' %
                     (property_name, cls.TYPE))
-        return Property(property_name, RADString())
+        return Property(property_name)
 
     @classmethod
     def get_property_names(cls):
@@ -53,10 +53,14 @@ class Resource:
         self.json = json
         for property_json in json.get('properties'):
             if property_json.get('value') or property_json.get('listvalue'):
-                property_name = property_json.get('name')
-                property = self.__class__.get_property(property_name)
-                property.load(property_json)
+                property = self.load_property(property_json)
                 self.properties.append(property)
+
+    def load_property(self, property_json):
+        property_name = property_json.get('name')
+        property = self.__class__.get_property(property_name)
+        property.load(property_json)
+        return property
 
     def get(self, property_name):
         properties = [
@@ -67,7 +71,7 @@ class Resource:
         json = {}
         for property in self.properties:
             if property.value:
-                json[property.name] = property.value.value
+                json[property.name] = property.value
         for resource in self.resources:
             if resource.get('tmp-id') is not None:
                 json.setdefault(resource.type, []).append(resource.to_json())

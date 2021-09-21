@@ -13,17 +13,16 @@
 # limitations under the License.
 
 from rad.rest.client.api.resource import Resource
-from rad.rest.client.api.zfsmgr_1.zfs_property import ZfsProperty
-from rad.rest.client.api.rad_values import RADPath, RADByte
+from rad.rest.client.api.properties import ByteProperty, PathProperty
 
 
 class ZfsResource(Resource):
     PROPERTIES = [
-        ZfsProperty('name', RADPath()),
-        ZfsProperty('used', RADByte()),
-        ZfsProperty('available', RADByte()),
-        ZfsProperty('referenced', RADByte()),
-        ZfsProperty('mountpoint', RADPath())
+        PathProperty('name'),
+        ByteProperty('used'),
+        ByteProperty('available'),
+        ByteProperty('referenced'),
+        PathProperty('mountpoint')
     ]
 
     def __init__(self, *args, **kwargs):

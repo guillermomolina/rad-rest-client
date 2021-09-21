@@ -16,7 +16,8 @@
 # TODO: use from prettytable import PrettyTable ?
 
 
-from rad.rest.client.api.rad_values import RADValue
+
+from rad.rest.client.api.properties import Property
 
 
 def print_table(data, truncate=True, separation=2, identation=0):
@@ -53,7 +54,7 @@ def print_table(data, truncate=True, separation=2, identation=0):
     strings = [''] * identation if identation > 0 else []
     for column in columns:
         data_value = data[0][column['key']]
-        if isinstance(data_value, RADValue) and data_value.__class__.RIGHT_ALIGNED:
+        if isinstance(data_value, Property) and data_value.__class__.RIGHT_ALIGNED:
             str_format = '{:>%s}' % str(column['length'])
         else:
             str_format = '{:%s}' % str(column['length'])
@@ -68,7 +69,7 @@ def print_table(data, truncate=True, separation=2, identation=0):
             data_value = data_row[column['key']]
             if truncate and len(value) > MAX_COLUMN_LENGTH:
                 value = value[:MAX_COLUMN_LENGTH-3] + '...'
-            if isinstance(data_value, RADValue) and data_value.__class__.RIGHT_ALIGNED:
+            if isinstance(data_value, Property) and data_value.__class__.RIGHT_ALIGNED:
                 str_format = '{:>%s}' % str(column['length'])
             else:
                 str_format = '{:%s}' % str(column['length'])

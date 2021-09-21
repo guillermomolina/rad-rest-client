@@ -16,13 +16,12 @@
 import argparse
 import logging
 import json
-from rad.rest.client.api.zfsmgr_1.zpool_resource import ZpoolResource
 import yaml
 
-from rad.rest.client.api.rad_values import RADValueDumper, RADValueJSONEncoder
-from rad.rest.client.util import print_table, order_dict_with_keys, print_parsable
+from rad.rest.client.util import print_table, print_parsable
 from rad.rest.client.api.authentication_1 import Session
 from rad.rest.client.api.zfsmgr_1 import Zpool
+from rad.rest.client.api.zfsmgr_1.zpool_resource import ZpoolResource
 
 LOG = logging.getLogger(__name__)
 
@@ -74,21 +73,19 @@ class CmdZpoolList:
             for zfs_resource in zpool_resources:
                 resource = {}
                 for property in zfs_resource.properties:
-                    resource[property.name] = property.value
+                    resource[property.name] = property
                 zpools.append(resource)
 
             # sort by key
             if options.sort_by is not None:
                 zpools = sorted(zpools, key=lambda i: i[options.sort_by])
 
-            # filter columns
-            # zpools = [order_dict_with_keys(zpool, options.columns)
-            #                 for zpool in zpools]
-
             if options.json:
-                print(json.dumps(zpools, indent=4, cls=RADValueJSONEncoder))
+                resources = [resource.to_json() for resource in zpool_resources]
+                print(json.dumps(resources, indent=4))
             elif options.yaml:
-                print(yaml.dump(zpools, Dumper=RADValueDumper))
+                resources = [resource.to_json() for resource in zpool_resources]
+                print(yaml.dump(resources))
             elif options.delimiter is not None:
                 print_parsable(zpools, options.delimiter)
             elif options.table:

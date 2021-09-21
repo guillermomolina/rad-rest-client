@@ -14,7 +14,7 @@
 
 from rad.rest.client.api.zonemgr_1 import RAD_NAMESPACE
 from rad.rest.client.api.rad_interface import RADInterface
-from rad.rest.client.api.zonemgr_1.zone_resources import ZoneResourceFactory
+from rad.rest.client.api.zonemgr_1.zone_resources import AnetResource, ZoneResourceFactory
 
 
 class Zone(RADInterface):
@@ -39,20 +39,25 @@ class Zone(RADInterface):
             self.auxstate = self.json.get('auxstate')
             self.state = self.json.get('state')
 
-    def getResourceProperties(self, resource=None, resource_properties=None):
-        json_body = {"filter": {"type": "device"}}
-        return self.rad_method('getResourceProperties', json_body)
-
-    def getResources(self, resource_type=None, resource_scope_type=None):
+    def getResourceProperties(self, filter, properties=None):
         json_body = {}
-        if resource_type is not None:
-            json_body['filter'] = {"type": resource_type}
-        if resource_scope_type is not None:
-            json_body['scope'] = {"type": resource_scope_type}
+        if filter is not None:
+            json_body['filter'] = {"type": filter.type}
+        if properties is not None:
+            json_body['properties'] = properties
+        properties = self.rad_method('getResourceProperties', json_body)
+        return [filter.load_property(property) for property in properties]
+
+    def getResources(self, filter=None, scope=None):
+        json_body = {}
+        if filter is not None:
+            json_body['filter'] = {"type": filter.type}
+        if scope is not None:
+            json_body['scope'] = {"type": scope.type}
         return self.rad_method('getResources', json_body)
 
     def get_properties(self):
-        payload = self.getResources(resource_scope_type='anet')
+        payload = self.getResources(scope=AnetResource())
         subresources = {}
         for resource_instance in payload:
             subresources.setdefault(resource_instance['parent'], []).append(

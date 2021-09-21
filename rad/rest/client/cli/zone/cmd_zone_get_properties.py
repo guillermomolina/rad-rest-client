@@ -18,10 +18,8 @@ import json
 import logging
 import yaml
 
-from rad.rest.client.api.rad_values import RADValueDumper
 from rad.rest.client.api.authentication_1 import Session
 from rad.rest.client.api.zonemgr_1 import Zone
-from rad.rest.client.api.zonemgr_1.zone_resources import ZoneResourceJSONEncoder
 
 LOG = logging.getLogger(__name__)
 
@@ -44,7 +42,6 @@ class CmdZoneGetProperties:
                            help='Show output in yaml format')
         group.add_argument('-j', '--json',
                            action='store_true',
-                           default=True,
                            help='Show output in json format')
         parser.add_argument('zonename',
                             help='Name of the zone')
@@ -63,10 +60,10 @@ class CmdZoneGetProperties:
             properties = zone.get_properties()
 
             if options.json:
-                print(json.dumps(properties,
-                      indent=4, cls=ZoneResourceJSONEncoder))
+
+                print(json.dumps(properties.to_json(), indent=4))
             elif options.yaml:
-                print(yaml.dump(properties, Dumper=RADValueDumper))
+                print(yaml.dump(properties.to_json()))
             else:
                 self.print(properties)
 
@@ -81,4 +78,4 @@ class CmdZoneGetProperties:
             print('%s%s:' % (resource.type, id_str))
             for property in resource.properties:
                 if property.value and property.name != 'id':
-                    print('%s%s: %s' % (ident, property.name, property.value))
+                    print('%s%s: %s' % (ident, property.name, str(property)))

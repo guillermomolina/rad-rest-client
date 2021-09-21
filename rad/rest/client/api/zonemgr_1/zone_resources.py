@@ -16,8 +16,7 @@ import logging
 
 from rad.rest.client import RADException
 from rad.rest.client.api.resource import Resource
-from rad.rest.client.api.property import Property
-from rad.rest.client.api.rad_values import RADBoolean, RADInteger, RADPath, RADString, RADArray, RADByte,  RADValueJSONEncoder
+from rad.rest.client.api.properties import ArrayProperty, BooleanProperty, ByteProperty, IntegerProperty, PathProperty, Property, SizeProperty
 
 LOG = logging.getLogger(__name__)
 
@@ -25,9 +24,9 @@ LOG = logging.getLogger(__name__)
 class VlanResource(Resource):
     TYPE = 'vlan'
     PROPERTIES = [
-        Property('tmp-id', RADInteger()),
-        Property('vlan-id', RADInteger()),
-        Property('allowed-vlan-ids', RADArray())
+        IntegerProperty('tmp-id'),
+        IntegerProperty('vlan-id'),
+        ArrayProperty('allowed-vlan-ids')
     ]
     RESOURCE_TYPES = []
 
@@ -38,7 +37,7 @@ class VlanResource(Resource):
 class MacResource(Resource):
     TYPE = 'mac'
     PROPERTIES = [
-        Property('tmp-id', RADInteger())
+        IntegerProperty('tmp-id')
     ]
     RESOURCE_TYPES = []
 
@@ -49,16 +48,16 @@ class MacResource(Resource):
 class AnetResource(Resource):
     TYPE = 'anet'
     PROPERTIES = [
-        Property('id', RADInteger()),
-        Property('tmp-id', RADInteger()),
-        Property('vlan-id', RADInteger()),
+        IntegerProperty('id'),
+        IntegerProperty('tmp-id'),
+        IntegerProperty('vlan-id'),
         Property('lower-link'),
         Property('allowed-address'),
-        Property('configure-allowed-address', RADBoolean()),
+        BooleanProperty('configure-allowed-address'),
         Property('defrouter'),
         Property('allowed-dhcp-cids'),
-        Property('link-protection', RADArray()),
-        Property('iov', RADBoolean('on', 'off')),
+        ArrayProperty('link-protection'),
+        BooleanProperty('iov', trueValue='on', falseValue='off'),
         Property('lro'),
         Property('ring-group'),
         Property('mac-address'),
@@ -68,6 +67,7 @@ class AnetResource(Resource):
         VlanResource(),
         MacResource()
     ]
+
     def __init__(self, *args, **kwargs):
         super().__init__(AnetResource.TYPE, *args, **kwargs)
 
@@ -75,13 +75,13 @@ class AnetResource(Resource):
 class DeviceResource(Resource):
     TYPE = 'device'
     PROPERTIES = [
-        Property('id', RADInteger()),
-        Property('tmp-id', RADInteger()),
-        Property('create-size'),
+        IntegerProperty('id'),
+        IntegerProperty('tmp-id'),
+        SizeProperty('create-size'),
         Property('storage'),
-        Property('allow-partition', RADBoolean()),
-        Property('allow-raw-io', RADBoolean()),
-        Property('bootpri', RADInteger())
+        BooleanProperty('allow-partition'),
+        BooleanProperty('allow-raw-io'),
+        IntegerProperty('bootpri')
     ]
     RESOURCE_TYPES = []
 
@@ -92,7 +92,7 @@ class DeviceResource(Resource):
 class CappedMemoryResource(Resource):
     TYPE = 'capped-memory'
     PROPERTIES = [
-        Property('physical', RADByte()),
+        ByteProperty('physical'),
         Property('pagesize-policy')
     ]
     RESOURCE_TYPES = []
@@ -104,7 +104,7 @@ class CappedMemoryResource(Resource):
 class VirtualCpuResource(Resource):
     TYPE = 'virtual-cpu'
     PROPERTIES = [
-        Property('ncpus', RADInteger())
+        IntegerProperty('ncpus')
     ]
     RESOURCE_TYPES = []
 
@@ -115,7 +115,7 @@ class VirtualCpuResource(Resource):
 class SuspendResource(Resource):
     TYPE = 'suspend'
     PROPERTIES = [
-        Property('path', RADPath())
+        PathProperty('path')
     ]
     RESOURCE_TYPES = []
 
@@ -126,7 +126,7 @@ class SuspendResource(Resource):
 class KeysourceResource(Resource):
     TYPE = 'keysource'
     PROPERTIES = [
-        Property('raw', RADString())
+        Property('raw')
     ]
     RESOURCE_TYPES = []
 
@@ -138,9 +138,9 @@ class GlobalResource(Resource):
     TYPE = 'global'
     PROPERTIES = [
         Property('zonename'),
-        Property('zonepath', RADPath()),
+        PathProperty('zonepath'),
         Property('brand'),
-        Property('autoboot', RADBoolean()),
+        BooleanProperty('autoboot'),
         Property('autoshutdown'),
         Property('bootargs'),
         Property('file-mac-profile'),
@@ -169,7 +169,6 @@ class GlobalResource(Resource):
             return concrete_class()
         return super(GlobalResource, cls).__new__(cls)
 
-
     def __init__(self, *args, **kwargs):
         super().__init__(GlobalResource.TYPE, *args, **kwargs)
 
@@ -193,10 +192,3 @@ class ZoneResourceFactory:
         resource = type()
         resource.load(json)
         return resource
-
-
-class ZoneResourceJSONEncoder(RADValueJSONEncoder):
-    def default(self, data):
-        if isinstance(data, Resource):
-            return data.to_json()
-        return super().default(data)

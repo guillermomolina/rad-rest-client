@@ -13,34 +13,33 @@
 # limitations under the License.
 
 from rad.rest.client.api.zfsmgr_1.zfs_resource import ZfsResource
-from rad.rest.client.api.zfsmgr_1.zfs_property import ZfsProperty
-from rad.rest.client.api.rad_values import RADByte, RADPath, RADString, RADBoolean
+from rad.rest.client.api.properties import BooleanProperty, ByteProperty, PathProperty, Property
 
 
 class ZpoolResource(ZfsResource):
     PROPERTIES = [
-        ZfsProperty('name', RADString()),
+        Property('name'),
 
-        ZfsProperty('allocated', RADByte()),
-        ZfsProperty('altroot', RADPath()),
-        ZfsProperty('autoexpand', RADBoolean()),
-        ZfsProperty('autoreplace', RADBoolean()),
-        ZfsProperty('bootfs', RADPath()),
-        ZfsProperty('cachefile', RADPath()),
-        ZfsProperty('capacity', RADByte()),
-        ZfsProperty('clustered', RADBoolean()),
-        ZfsProperty('dedupditto', RADString()),
-        ZfsProperty('dedupratio', RADString()),
-        ZfsProperty('delegation', RADBoolean()),
-        ZfsProperty('failmode', RADString()),
-        ZfsProperty('free', RADByte()),
-        ZfsProperty('guid', RADString()),
-        ZfsProperty('health', RADString()),
-        ZfsProperty('lastscrub', RADString()),
-        ZfsProperty('listshares', RADBoolean()),
-        ZfsProperty('listsnapshots', RADBoolean()),
-        ZfsProperty('readonly', RADBoolean()),
-        ZfsProperty('scrubinterval', RADString()),
-        ZfsProperty('size', RADByte()),
-        ZfsProperty('version', RADString())
+        ByteProperty('allocated'),
+        PathProperty('altroot'),
+        BooleanProperty('autoexpand'),
+        BooleanProperty('autoreplace'),
+        PathProperty('bootfs'),
+        PathProperty('cachefile'),
+        ByteProperty('capacity'),
+        BooleanProperty('clustered'),
+        Property('dedupditto'),
+        Property('dedupratio'),
+        BooleanProperty('delegation'),
+        Property('failmode'),
+        ByteProperty('free'),
+        Property('guid'),
+        Property('health'),
+        Property('lastscrub'),
+        BooleanProperty('listshares'),
+        BooleanProperty('listsnapshots'),
+        BooleanProperty('readonly'),
+        Property('scrubinterval'),
+        ByteProperty('size'),
+        Property('version')
     ]
