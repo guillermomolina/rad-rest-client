@@ -51,7 +51,7 @@ class Session(RADInterface):
         else:
             raise RADException('hostname or url is needed')
         self.session = None
-        self.closed = None
+        self._closed = None
         self.max_session_time = 0
         filename = '~/.cache/rad/{}_{}_{}.dat'.format(
             self.protocol, self.hostname, self.port)
