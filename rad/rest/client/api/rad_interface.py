@@ -28,6 +28,7 @@ class RADInterface(object):
         self.rad_api_version = rad_api_version or '1.0'
         self._conn = _conn
         self.rad_instance_id = None
+        self.rad_reference_id = None
         if href is not None:
             self.href = href
         self.json = json
@@ -40,12 +41,17 @@ class RADInterface(object):
             'version': self.rad_api_version,
             'collection': self.rad_collection
         }
-        if self.rad_instance_id is None:
-            return href
-        return '%(href)s/%(id)s' % {
-            'href': href,
-            'id': urllib.parse.quote(self.rad_instance_id, safe=',')
-        }
+        if self.rad_instance_id is not None:
+            return '%(href)s/%(id)s' % {
+                'href': href,
+                'id': urllib.parse.quote(self.rad_instance_id, safe=',')
+            }
+        if self.rad_reference_id is not None:
+            return '%(href)s/_rad_reference/%(id)d' % {
+                'href': href,
+                'id': self.rad_reference_id
+            }
+        return href
 
     @href.setter
     def href(self, href):
@@ -59,10 +65,12 @@ class RADInterface(object):
         self.rad_collection = parts[3]
         if len(parts) == 5 and parts[4] != '':
             self.rad_instance_id = urllib.parse.unquote(parts[4])
-        # elif len(parts) > 5:
-        #     raise RADError('NYI')
         else:
             self.rad_instance_id = None
+        if len(parts) == 6 and parts[4] == '_rad_reference':
+            self.rad_reference_id = int(parts[5])
+        else:
+            self.rad_reference_id = None
 
     def init(self):
         pass
@@ -81,9 +89,13 @@ class RADInterface(object):
         response = self.request(
             'PUT', '/_rad_method/{}'.format(method), json=json_body, **kwargs)
         if response.status != 'success':
-            LOG.error(response.status)
-            LOG.error(response.payload.get('code'))
-            LOG.error(response.payload.get('stderr'))
+            LOG.warning('While executing method %s on %s' %
+                        (method, self.href))
+            LOG.warning(response.status)
+            if response.payload.get('code'):
+                LOG.warning(response.payload.get('code'))
+            if response.payload.get('stderr'):
+                LOG.warning(response.payload.get('stderr'))
             if response.status == 'object not found':
                 raise NotFoundError(response.status)
             raise ObjectError(message=response.payload.get('stderr'))

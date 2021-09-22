@@ -12,11 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import traceback
 import logging
 import datetime
-import os
 import pickle
+from nova.virt.block_device import is_block_device_mapping
 import requests
 from pathlib import Path
 from urllib.parse import urlparse
@@ -85,14 +84,23 @@ class Session(RADInterface):
             if self.max_session_time == 0 or last_modification < self.max_session_time:
                 with self.session_filename.open("rb") as f:
                     self.session = pickle.load(f)
-                    self.rad_instance_id = pickle.load(f)
+                    self.rad_reference_id = pickle.load(f)
                     was_read_from_cache = True
                     LOG.debug("Loaded session from cache (last access %ds ago) "
                               % last_modification)
+                    self._closed = None if self.is_logged_in() else True
         if not was_read_from_cache:
             self.session = requests.Session()
-            self.rad_instance_id = None
+            self.rad_reference_id = None
+            self._closed = True
             LOG.debug('Created new session')
+
+    def is_logged_in(self):
+        response = self.request("GET")
+        if response.status != 'success':
+            LOG.debug('Request to get session %d state failed' % self.rad_reference_id)
+            return False
+        return True        
 
     def save_session(self):
         parent = self.session_filename.parent
@@ -101,7 +109,7 @@ class Session(RADInterface):
         parent.chmod(0o700)
         with self.session_filename.open("wb") as f:
             pickle.dump(self.session, f)
-            pickle.dump(self.rad_instance_id, f)
+            pickle.dump(self.rad_reference_id, f)
             LOG.debug("Saved session to cache")
         self.session_filename.chmod(0o600)
 

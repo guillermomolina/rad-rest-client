@@ -131,6 +131,18 @@ class CappedCpuResource(Resource):
         super().__init__(CappedCpuResource.TYPE, *args, **kwargs)
 
 
+class DedicatedCpuResource(Resource):
+    TYPE = 'dedicated-cpu'
+    PROPERTIES = [
+        NcpusProperty('ncpus')
+    ]
+    RESOURCE_TYPES = []
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(DedicatedCpuResource.TYPE, *args, **kwargs)
+
+
+
 class SuspendResource(Resource):
     TYPE = 'suspend'
     PROPERTIES = [
@@ -179,6 +191,7 @@ class GlobalResource(Resource):
         CappedMemoryResource(),
         VirtualCpuResource(),
         CappedCpuResource(),
+        DedicatedCpuResource(),
         SuspendResource(),
         KeysourceResource()
     ]
@@ -197,7 +210,7 @@ class ZoneResourceFactory:
     @staticmethod
     def get_type(resource_type):
         resources = [GlobalResource, AnetResource, DeviceResource, VlanResource, MacResource,
-                     CappedMemoryResource, VirtualCpuResource, CappedCpuResource, SuspendResource, KeysourceResource]
+                     CappedMemoryResource, VirtualCpuResource, CappedCpuResource, DedicatedCpuResource, SuspendResource, KeysourceResource]
         for resource in resources:
             if resource.TYPE == resource_type:
                 return resource

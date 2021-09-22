@@ -14,13 +14,13 @@
 
 import argparse
 
-from rad.rest.client.cli.kstat.cmd_kstat_list import CmdKstatList
+from rad.rest.client.cli.kstat.cmd_kstat_get import CmdKstatGet
 
 
 class CmdKstat:
     name = 'kstat'
     aliases = []
-    commands = [CmdKstatList]
+    commands = [CmdKstatGet]
 
     @staticmethod
     def init_parser(subparsers):
