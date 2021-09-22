@@ -74,8 +74,8 @@ class BooleanProperty(Property):
         elif value == self.falseValue:
             return False
         else:
-            raise RADException('Boolean property value %s is not %s or %s' % (
-                str(value), str(self.trueValue), str(self.falseValue)))
+            raise RADException('Boolean property %s value %s is not %s or %s' % (
+                self.name, str(value), str(self.trueValue), str(self.falseValue)))
 
     def __str__(self):
         return self.trueValue if self.value else self.falseValue

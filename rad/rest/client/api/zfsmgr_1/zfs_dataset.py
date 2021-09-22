@@ -23,6 +23,9 @@ class ZfsDataset(RADInterface):
     def __init__(self, *args, **kwargs):
         super().__init__(RAD_NAMESPACE, ZfsDataset.RAD_COLLECTION, *args, **kwargs)
 
+    def property_names(self):
+        return [property.name in ZfsResource.PROPERTIES]
+
     def get_filesystems(self, recursive=False):
         json_body = {"recursive": recursive}
 
@@ -30,7 +33,7 @@ class ZfsDataset(RADInterface):
 
     def get_props(self, property_names=None):
         if property_names is None:
-            property_names = ZfsDataset.property_names()
+            property_names = ZfsResource.get_property_names()
 
         props = [property.get_definition()
                  for property in ZfsResource.PROPERTIES if property.name in property_names]

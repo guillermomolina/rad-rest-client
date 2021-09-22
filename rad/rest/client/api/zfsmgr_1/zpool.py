@@ -25,7 +25,7 @@ class Zpool(RADInterface):
 
     def get_props(self, property_names=None):
         if property_names is None:
-            property_names = Zpool.property_names()
+            property_names = ZpoolResource.get_property_names()
 
         props = [property.get_definition()
                  for property in ZpoolResource.PROPERTIES if property.name in property_names]
