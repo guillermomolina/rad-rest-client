@@ -15,7 +15,6 @@
 import logging
 import datetime
 import pickle
-from nova.virt.block_device import is_block_device_mapping
 import requests
 from pathlib import Path
 from urllib.parse import urlparse
@@ -26,7 +25,7 @@ from rad.rest.client.api.rad_response import RADResponse
 from rad.rest.client.api.authentication_1 import RAD_NAMESPACE, RAD_API_VERSION
 
 LOG = logging.getLogger(__name__)
-
+CACHE_FILE_VERSION='1.0.0'
 
 def modification_date(filename):
     t = filename.stat().st_mtime
@@ -83,12 +82,17 @@ class Session(RADInterface):
             last_modification = (datetime.datetime.now() - time).seconds
             if self.max_session_time == 0 or last_modification < self.max_session_time:
                 with self.session_filename.open("rb") as f:
-                    self.session = pickle.load(f)
-                    self.rad_reference_id = pickle.load(f)
-                    was_read_from_cache = True
-                    LOG.debug("Loaded session from cache (last access %ds ago) "
-                              % last_modification)
-                    self._closed = None if self.is_logged_in() else True
+                    version = pickle.load(f)
+                    if version == CACHE_FILE_VERSION:
+                        self.session = pickle.load(f)
+                        self.rad_reference_id = pickle.load(f)
+                        was_read_from_cache = True
+                        LOG.debug("Loaded session from cache version %s (last access %ds ago) "
+                                % (version, last_modification))
+                        self._closed = None if self.is_logged_in() else True
+                    else:
+                        LOG.debug("Cache file version %s is not valid, should be %s"
+                                % (version, CACHE_FILE_VERSION))
         if not was_read_from_cache:
             self.session = requests.Session()
             self.rad_reference_id = None
@@ -108,6 +112,7 @@ class Session(RADInterface):
             parent.mkdir(parents=True)
         parent.chmod(0o700)
         with self.session_filename.open("wb") as f:
+            pickle.dump(CACHE_FILE_VERSION, f)
             pickle.dump(self.session, f)
             pickle.dump(self.rad_reference_id, f)
             LOG.debug("Saved session to cache")
